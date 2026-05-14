@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300" fill="none">
+  <!-- Square border — sharp corners, thin stroke -->
+  <rect x="24" y="16" width="192" height="192" stroke="#1A1A2E" stroke-width="3" fill="none"/>
+
+  <!-- L: vertical stroke from top down, then horizontal right -->
+  <path d="M 72 52 L 72 172 L 140 172" 
+        stroke="#1A1A2E" stroke-width="4.5" stroke-linecap="butt" stroke-linejoin="miter" fill="none"/>
+
+  <!-- R: vertical stroke rises from L's base, bowl curves from top -->
+  <path d="M 120 52 L 120 172" 
+        stroke="#1A1A2E" stroke-width="4.5" stroke-linecap="butt" fill="none"/>
+
+  <!-- R bowl: smooth curve from top of vertical, sweeping right and back -->
+  <path d="M 120 52 C 120 52, 178 52, 178 100 C 178 140, 140 142, 120 142" 
+        stroke="#1A1A2E" stroke-width="4.5" stroke-linecap="butt" fill="none"/>
+
+  <!-- R leg: diagonal from bowl junction downward-right -->
+  <path d="M 138 132 L 176 172" 
+        stroke="#1A1A2E" stroke-width="4.5" stroke-linecap="butt" fill="none"/>
+
+  <!-- LIOR ROBAS text -->
+  <text x="120" y="236" text-anchor="middle" 
+        font-family="'Helvetica Neue', 'Arial', sans-serif" 
+        font-size="20" font-weight="700" letter-spacing="7" fill="#1A1A2E">LIOR ROBAS</text>
+
+  <!-- LAW FIRM & NOTARY text -->
+  <text x="120" y="258" text-anchor="middle" 
+        font-family="'Helvetica Neue', 'Arial', sans-serif" 
+        font-size="10" font-weight="400" letter-spacing="4.5" fill="#1A1A2E">LAW FIRM &amp; NOTARY</text>
+</svg>
