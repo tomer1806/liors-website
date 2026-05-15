@@ -1296,7 +1296,10 @@ div.service-card,
 .footer__contact-item svg {
     width: 16px;
     height: 16px;
+    max-width: 16px;
+    max-height: 16px;
     flex-shrink: 0;
+    overflow: hidden;
     color: var(--gold);
 }
 
@@ -1382,7 +1385,7 @@ div.service-card,
 .fab__btn--phone { background: var(--navy); }
 .fab__btn--email { background: var(--gold-dark); }
 
-.fab__btn svg { width: 24px; height: 24px; }
+.fab__btn svg { width: 24px; height: 24px; max-width: 24px; max-height: 24px; overflow: hidden; }
 
 /* --- Reveal Animations --- */
 .reveal {

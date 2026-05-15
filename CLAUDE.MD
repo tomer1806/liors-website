@@ -118,6 +118,24 @@ All colors are CSS custom properties defined in `:root` at the top of `css/style
 ### Changing Office Hours
 Office hours appear only in `contact.html` in the contact info section.
 
+## Known Issues & Fixes Applied
+
+The following visual bugs were found after the initial build and fixed. Documenting them here so future sessions know the patterns to avoid:
+
+1. **Dropdown menus rendered as visible inline text** — CSS `opacity: 0; visibility: hidden` alone was NOT enough to hide `.nav__dropdown-menu`. Fix: added `display: none` as default, `display: block` on `:hover`. Always use `display: none` for hidden menus, not just opacity/visibility.
+
+2. **Footer social icons rendered at full viewport size** — SVG elements without explicit `width`/`height` HTML attributes ignored CSS sizing rules. Fix: added `width="18" height="18"` attributes directly on all `<svg>` elements in the footer social links across ALL pages. Also added `overflow: hidden` and `max-width`/`max-height` constraints on `.footer__social a` in CSS. **Rule: always add explicit `width` and `height` attributes to inline SVGs.**
+
+3. **Card components (service, team, testimonial) had no visible backgrounds or borders** — CSS custom variables (`var(--white)`, `var(--border)`) were not resolving for card backgrounds in some contexts. Fix: hardcoded `#FFFFFF` for backgrounds and `#E5DDD0` for borders instead of using CSS variables. If re-introducing variables, test card rendering thoroughly.
+
+4. **Grid layouts collapsed to single column** — `grid-template-columns: repeat(auto-fill, minmax(Xpx, 1fr))` didn't produce multi-column layouts reliably. Fix: changed to explicit `repeat(3, 1fr)` / `repeat(4, 1fr)` with responsive overrides at 1024px and 768px breakpoints.
+
+5. **Quote block invisible on navy background** — Inline `style` attributes using `var(--white)` for text color on a dark background didn't render. Fix: removed inline styles, added dedicated `.section--navy .quote-block`, `.section--navy .quote-block__text`, `.section--navy .quote-block__author` CSS rules with hardcoded white/gold colors.
+
+6. **CTA banner background not rendering** — `background: linear-gradient(...)` with CSS variables didn't apply. Fix: hardcoded hex colors in the gradient (`#1B2A4A`, `#0F1A30`, `#7A1E32`).
+
+**General lesson:** When CSS custom properties (`var(--xxx)`) don't resolve in production, hardcode hex values as fallback. Test in a real browser after every major CSS change — CSS parsing errors can silently break rules that follow the error.
+
 ## Team Members (as of 2026)
 1. **עו"ד ליאור רובס** — Owner & Founder. 17 years in the field, 15 as active attorney. Lives in Even Yehuda, father of 3. Football enthusiast.
 2. **עו"ד שמואל שפיגלר** — Senior Counsel. 40+ years experience. All court levels, corporate law, wills, inheritance, taxes, real estate.
