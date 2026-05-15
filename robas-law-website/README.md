@@ -57,11 +57,11 @@ robas-law/
 
 | Channel   | Value                          | Link Format                              |
 |-----------|--------------------------------|------------------------------------------|
-| Phone     | 09-8623299                     | `tel:+972-9-8623299`                     |
-| Fax       | 09-8612894                     | —                                        |
+| Phone     | 09-8612894                     | `tel:+972-9-8612894`                     |
+| Fax       | 073-2758870                    | —                                        |
 | Email     | office@robas-law.co.il         | `mailto:office@robas-law.co.il`          |
-| WhatsApp  | +972-9-8623299                 | `https://wa.me/97298623299`              |
-| Address   | גביש 4, "בית טיטניום", נתניה  | Google Maps embed in contact section     |
+| WhatsApp  | +972-9-8612894                 | `https://wa.me/97298612894`              |
+| Address   | הגביש 4, בית טיטניום, קומה א', נתניה | Google Maps embed in contact page  |
 
 All links (phone, WhatsApp, email) are already wired into:
 - Navigation bar (WhatsApp button)

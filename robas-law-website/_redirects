@@ -1,5 +1,22 @@
 # www redirect is handled via Cloudflare DNS settings
 # Only relative URLs are allowed here
 
-# Add page redirects as needed:
-# /old-page  /new-page  301
+# Legacy WordPress URL redirects (from old site)
+/odot/ /about.html 301
+/member/lior-robas/ /lior.html 301
+/real-estate-service/ /real-estate.html 301
+/representation_of_commercial_companies/ /commercial.html 301
+/notary-services/ /notary.html 301
+/notary-service/ /notary.html 301
+/continuous-power-of-attorney-how-does-it-work/ /power-of-attorney.html 301
+/continuous-power-of-attorney-full-guide/ /poa-guide.html 301
+/continuous-power-of-attorney-sample-form-2/ /power-of-attorney.html 301
+/continuous-power-of-attorney-explanation-form/ /power-of-attorney.html 301
+/continuous-power-of-attorney-explanation-form-2/ /power-of-attorney.html 301
+/continuous-power-of-attorney-download/ /power-of-attorney.html 301
+/house-rules/ /house-rules.html 301
+/contact-us/ /contact.html 301
+/about-us/ /about.html 301
+/customers/ /clients.html 301
+/practice-areas/ /practice-areas.html 301
+/privacy-policy/ /privacy.html 301
