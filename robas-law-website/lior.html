@@ -53,25 +53,42 @@
         </div>
     </nav>
     <div class="mobile-menu" id="mobileMenu" style="position:fixed;inset:0;z-index:999;background:#1B2A4A;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);">
-        <div class="mobile-menu__inner">
-            <a href="index.html" class="mobile-menu__link">ראשי</a>
-            <a href="about.html" class="mobile-menu__link">המשרד</a>
-            <a href="lior.html" class="mobile-menu__sub-link">אודות ליאור</a>
-            <a href="practice-areas.html" class="mobile-menu__sub-link">תחומי התמחות</a>
-            <a href="clients.html" class="mobile-menu__sub-link">לקוחות</a>
-            <div class="mobile-menu__divider"></div>
-            <a href="real-estate.html" class="mobile-menu__link">ליווי עסקאות נדל״ן</a>
-            <a href="commercial.html" class="mobile-menu__link">ייצוג חברות מסחריות</a>
-            <a href="notary.html" class="mobile-menu__link">שירותי נוטריון</a>
-            <a href="power-of-attorney.html" class="mobile-menu__link">ייפוי כוח מתמשך</a>
-            <a href="house-rules.html" class="mobile-menu__link">חוקי הבית</a>
-            <a href="contact.html" class="mobile-menu__link">צור קשר</a>
-            <div class="mobile-menu__contact">
-                <a href="tel:+972-9-8612894" class="mobile-menu__contact-btn">09-8612894</a>
-                <a href="https://wa.me/97298612894?text=שלום%2C%20פונה%20אליכם%20מהאתר" target="_blank" class="mobile-menu__contact-btn mobile-menu__contact-btn--wa">WhatsApp</a>
+        <div class="mobile-menu__inner" style="text-align:center;padding:20px;max-height:90vh;overflow-y:auto;">
+            <a href="index.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">ראשי</a>
+            <a href="about.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">המשרד</a>
+            <a href="lior.html" class="mobile-menu__sub-link" style="display:block;color:rgba(255,255,255,0.6);font-size:1rem;padding:8px 0;text-decoration:none;">אודות ליאור</a>
+            <a href="practice-areas.html" class="mobile-menu__sub-link" style="display:block;color:rgba(255,255,255,0.6);font-size:1rem;padding:8px 0;text-decoration:none;">תחומי התמחות</a>
+            <a href="clients.html" class="mobile-menu__sub-link" style="display:block;color:rgba(255,255,255,0.6);font-size:1rem;padding:8px 0;text-decoration:none;">לקוחות</a>
+            <div class="mobile-menu__divider" style="width:60px;height:2px;background:#C8963E;margin:16px auto;"></div>
+            <a href="real-estate.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">ליווי עסקאות נדל״ן</a>
+            <a href="commercial.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">ייצוג חברות מסחריות</a>
+            <a href="notary.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">שירותי נוטריון</a>
+            <a href="power-of-attorney.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">ייפוי כוח מתמשך</a>
+            <a href="house-rules.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">חוקי הבית</a>
+            <a href="contact.html" class="mobile-menu__link" style="display:block;color:#FFFFFF;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:1.5rem;font-weight:500;padding:12px 0;text-decoration:none;">צור קשר</a>
+            <div class="mobile-menu__contact" style="margin-top:30px;display:flex;flex-direction:column;gap:12px;align-items:center;">
+                <a href="tel:+972-9-8612894" class="mobile-menu__contact-btn" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:30px;color:#FFFFFF;font-weight:600;border:1px solid rgba(255,255,255,0.3);text-decoration:none;">09-8612894</a>
+                <a href="https://wa.me/97298612894?text=שלום%2C%20פונה%20אליכם%20מהאתר" target="_blank" class="mobile-menu__contact-btn mobile-menu__contact-btn--wa" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:30px;color:#FFFFFF;font-weight:600;background:#25D366;border:1px solid #25D366;text-decoration:none;">WhatsApp</a>
             </div>
         </div>
     </div>
+<script>
+document.getElementById("navBurger").addEventListener("click",function(){
+var m=document.getElementById("mobileMenu");
+var isOpen=m.style.visibility==="visible";
+m.style.opacity=isOpen?"0":"1";
+m.style.visibility=isOpen?"hidden":"visible";
+document.body.style.overflow=isOpen?"":"hidden";
+});
+document.querySelectorAll("#mobileMenu a").forEach(function(link){
+link.addEventListener("click",function(){
+var m=document.getElementById("mobileMenu");
+m.style.opacity="0";
+m.style.visibility="hidden";
+document.body.style.overflow="";
+});
+});
+</script>
 
     <!-- PAGE HEADER -->
     <header class="page-header">
@@ -142,7 +159,7 @@
     </section>
 
     <!-- CTA BANNER -->
-    <section class="cta-banner">
+    <section class="cta-banner" style="background:linear-gradient(135deg,#1B2A4A 0%,#0F1A30 50%,#7A1E32 100%);padding:clamp(50px,8vw,90px) 0;text-align:center;position:relative;overflow:hidden;">
         <div class="container reveal">
             <h2 class="cta-banner__title">בואו נדבר</h2>
             <p class="cta-banner__text">מוזמנים לפנות אליי ישירות — אשמח לשמוע ולייעץ ללא התחייבות.</p>
