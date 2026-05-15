@@ -232,11 +232,12 @@ input, textarea, select { font-family: inherit; }
 }
 
 .nav__inner {
-    max-width: var(--container-width);
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 clamp(20px, 4vw, 40px);
     display: flex;
     align-items: center;
+    justify-content: space-between;
     height: 100%;
     gap: 20px;
 }
@@ -256,10 +257,7 @@ input, textarea, select { font-family: inherit; }
 .nav--scrolled .nav__logo-img { height: 32px; }
 
 .nav__links {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-right: auto;
+    display: none;
 }
 
 .nav__link {
@@ -375,7 +373,7 @@ input, textarea, select { font-family: inherit; }
 
 /* Burger */
 .nav__burger {
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 5px;
     padding: 8px;
@@ -1398,6 +1396,84 @@ div.service-card,
 
 .fab__btn svg { width: 24px; height: 24px; max-width: 24px; max-height: 24px; overflow: hidden; }
 
+/* --- Contact Info Band (above footer, all pages) --- */
+.contact-band {
+    background: #1B2A4A;
+    padding: 40px 0;
+    color: #FFFFFF;
+}
+
+.contact-band__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 40px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    text-align: center;
+}
+
+.contact-band__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-band__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(200, 150, 62, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #C8963E;
+    margin-bottom: 4px;
+}
+
+.contact-band__icon svg {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.contact-band__label {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+}
+
+.contact-band__value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.contact-band__value a {
+    color: #FFFFFF;
+    transition: color 0.2s ease;
+}
+
+.contact-band__value a:hover {
+    color: #C8963E;
+}
+
+@media (max-width: 768px) {
+    .contact-band__inner {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-band__inner {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
 /* --- Reveal Animations --- */
 .reveal {
     opacity: 0;
@@ -1427,9 +1503,7 @@ div.service-card,
 
 /* --- Responsive --- */
 @media (max-width: 1024px) {
-    .nav__links { display: none; }
     .nav__cta { display: none; }
-    .nav__burger { display: flex; }
 
     .about__grid { grid-template-columns: 1fr; gap: 40px; }
     .contact-grid { grid-template-columns: 1fr; }

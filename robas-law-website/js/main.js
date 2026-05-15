@@ -28,13 +28,18 @@ document.addEventListener('DOMContentLoaded', () => {
         burger.addEventListener('click', () => {
             burger.classList.toggle('active');
             mobileMenu.classList.toggle('active');
-            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+            var isActive = mobileMenu.classList.contains('active');
+            mobileMenu.style.opacity = isActive ? '1' : '0';
+            mobileMenu.style.visibility = isActive ? 'visible' : 'hidden';
+            document.body.style.overflow = isActive ? 'hidden' : '';
         });
 
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 burger.classList.remove('active');
                 mobileMenu.classList.remove('active');
+                mobileMenu.style.opacity = '0';
+                mobileMenu.style.visibility = 'hidden';
                 document.body.style.overflow = '';
             });
         });
