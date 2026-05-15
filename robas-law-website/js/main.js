@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     contactForm.style.display = 'none';
                     const success = document.getElementById('formSuccess');
-                    if (success) success.style.display = 'block';
+                    if (success) success.style.setProperty('display', 'block', 'important');
                 } else {
                     throw new Error('Server error');
                 }
