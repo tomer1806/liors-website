@@ -323,14 +323,16 @@ input, textarea, select { font-family: inherit; }
     box-shadow: var(--shadow-lg);
     min-width: 220px;
     padding: 8px;
+    display: none;
     opacity: 0;
     visibility: hidden;
     transform: translateY(8px);
-    transition: all 0.25s var(--ease-out);
+    transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out), visibility 0.25s;
     z-index: 100;
 }
 
 .nav__dropdown:hover .nav__dropdown-menu {
+    display: block;
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -698,19 +700,22 @@ input, textarea, select { font-family: inherit; }
 /* --- Practice Areas / Services --- */
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
 }
 
+a.service-card,
+div.service-card,
 .service-card {
-    background: var(--white);
-    border-radius: var(--radius-lg);
+    background: #FFFFFF;
+    border-radius: 20px;
     padding: 32px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px rgba(27, 42, 74, 0.06);
     transition: all 0.3s var(--ease-out);
-    border: 1px solid var(--border);
+    border: 1px solid #E5DDD0;
     text-decoration: none;
     display: block;
+    color: inherit;
 }
 
 .service-card:hover {
@@ -761,17 +766,17 @@ input, textarea, select { font-family: inherit; }
 /* --- Team Section --- */
 .team-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 30px;
 }
 
 .team-card {
     text-align: center;
-    background: var(--white);
-    border-radius: var(--radius-lg);
+    background: #FFFFFF;
+    border-radius: 20px;
     padding: 36px 24px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(27, 42, 74, 0.06);
+    border: 1px solid #E5DDD0;
     transition: all 0.3s var(--ease-out);
 }
 
@@ -814,16 +819,16 @@ input, textarea, select { font-family: inherit; }
 /* --- Testimonials --- */
 .testimonials-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 28px;
 }
 
 .testimonial-card {
-    background: var(--white);
-    border-radius: var(--radius-lg);
+    background: #FFFFFF;
+    border-radius: 20px;
     padding: 36px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(27, 42, 74, 0.06);
+    border: 1px solid #E5DDD0;
     position: relative;
 }
 
@@ -903,7 +908,7 @@ input, textarea, select { font-family: inherit; }
 
 /* --- CTA Banner --- */
 .cta-banner {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 50%, var(--burgundy) 100%);
+    background: linear-gradient(135deg, #1B2A4A 0%, #0F1A30 50%, #7A1E32 100%);
     padding: clamp(50px, 8vw, 90px) 0;
     text-align: center;
     position: relative;
@@ -1125,8 +1130,8 @@ input, textarea, select { font-family: inherit; }
 
 /* --- Quote Block --- */
 .quote-block {
-    background: var(--cream);
-    border-radius: var(--radius-lg);
+    background: #F5EDE0;
+    border-radius: 20px;
     padding: 40px;
     text-align: center;
     margin: 40px 0;
@@ -1137,15 +1142,28 @@ input, textarea, select { font-family: inherit; }
     font-family: var(--font-display);
     font-size: 1.3rem;
     font-weight: 500;
-    color: var(--navy);
+    color: #1B2A4A;
     line-height: 1.7;
     margin-bottom: 16px;
 }
 
 .quote-block__author {
     font-size: 0.9rem;
-    color: var(--gold-dark);
+    color: #A67B2E;
     font-weight: 600;
+}
+
+.section--navy .quote-block {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.section--navy .quote-block__text {
+    color: #FFFFFF;
+}
+
+.section--navy .quote-block__author {
+    color: #DAB668;
 }
 
 /* --- Values (House Rules) --- */
@@ -1291,6 +1309,10 @@ input, textarea, select { font-family: inherit; }
 .footer__social a {
     width: 40px;
     height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
     border-radius: 50%;
     background: rgba(255,255,255,0.08);
     display: flex;
@@ -1298,12 +1320,21 @@ input, textarea, select { font-family: inherit; }
     justify-content: center;
     color: rgba(255,255,255,0.6);
     transition: all 0.2s ease;
+    overflow: hidden;
 }
 .footer__social a:hover {
     background: var(--gold);
     color: var(--white);
 }
-.footer__social a svg { width: 18px; height: 18px; }
+.footer__social a svg {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
+    max-width: 18px;
+    max-height: 18px;
+    flex-shrink: 0;
+}
 
 .footer__bottom {
     padding: 20px 0;
@@ -1389,13 +1420,16 @@ input, textarea, select { font-family: inherit; }
     .about__grid { grid-template-columns: 1fr; gap: 40px; }
     .contact-grid { grid-template-columns: 1fr; }
     .footer__grid { grid-template-columns: 1fr 1fr; }
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+    .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
     .about__stats { flex-wrap: wrap; gap: 24px; }
     .testimonials-grid { grid-template-columns: 1fr; }
     .services-grid { grid-template-columns: 1fr; }
-    .team-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
     .values-grid { grid-template-columns: 1fr; }
     .clients-grid { grid-template-columns: repeat(2, 1fr); }
     .footer__grid { grid-template-columns: 1fr; gap: 30px; }
