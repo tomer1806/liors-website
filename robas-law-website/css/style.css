@@ -417,8 +417,15 @@ h1, h2, h3, h4 {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* The firm's photographs are PORTRAIT (1200x1600) in a landscape hero, so `cover`
+       crops hard. Left centred, a wide screen shows only the middle third, which on the
+       reception shot is the dark front panel of the desk and reads as a black box.
+       Each slide therefore aims the crop at the part of its own frame worth showing. */
+    object-position: center var(--hero-focus, 50%);
     transform: scale(1.06);
 }
+.hero__slide--reception { --hero-focus: 30%; }   /* triptych, shelf, desk and chairs */
+.hero__slide--entrance  { --hero-focus: 45%; }   /* the LR monogram wall */
 .hero__slide.is-active img { animation: heroDrift 9s linear forwards; }
 
 @keyframes heroDrift {
@@ -429,8 +436,13 @@ h1, h2, h3, h4 {
 .hero__scrim {
     position: absolute;
     inset: 0;
+    /* Two layers: a soft vertical wash for overall legibility, plus a horizontal one
+       that is heaviest on the reading side (right, in RTL) where the text actually
+       sits. The previous single 92% vertical wash blacked out the photograph exactly
+       where the content is. */
     background:
-        linear-gradient(to top, rgba(22, 23, 25, 0.92) 0%, rgba(22, 23, 25, 0.55) 45%, rgba(22, 23, 25, 0.35) 100%);
+        linear-gradient(to left, rgba(22, 23, 25, 0.82) 0%, rgba(22, 23, 25, 0.45) 55%, rgba(22, 23, 25, 0.22) 100%),
+        linear-gradient(to top, rgba(22, 23, 25, 0.55) 0%, rgba(22, 23, 25, 0.18) 55%, rgba(22, 23, 25, 0.30) 100%);
 }
 
 .hero__inner {
@@ -823,8 +835,10 @@ a.service-card:hover { background: var(--paper); }
     width: 100%;
     height: 124%;
     object-fit: cover;
+    object-position: center var(--band-focus, 50%);
     will-change: transform;
 }
+.band-photo__img--reception { --band-focus: 24%; }
 .band-photo__scrim { position: absolute; inset: 0; background: rgba(22, 23, 25, 0.34); }
 .band-photo__quote {
     position: relative;
