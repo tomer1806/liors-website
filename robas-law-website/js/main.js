@@ -235,6 +235,64 @@
             status.className = 'form-status ' + (ok ? 'form-status--ok' : 'form-status--err');
         };
 
+        /* If the endpoint is unconfigured or down, the visitor must not hit a dead end.
+           Offer the same enquiry, already written out, over WhatsApp or email — both of
+           which reach the office without depending on the mail provider at all. */
+        var offerFallback = function (message) {
+            if (status === null) return;
+
+            var data = Object.fromEntries(new FormData(form));
+            var labels = { name: 'שם', phone: 'טלפון', email: 'דוא״ל', subject: 'נושא', scope: 'תחומים', message: 'הודעה' };
+            var body = Object.keys(labels)
+                .filter(function (k) { return data[k]; })
+                .map(function (k) { return labels[k] + ': ' + data[k]; })
+                .join('\n');
+
+            var waBase = form.getAttribute('data-fallback-wa');
+            var email = form.getAttribute('data-fallback-email');
+            var phone = form.getAttribute('data-fallback-phone');
+
+            status.textContent = '';
+            status.className = 'form-status form-status--err';
+
+            var note = document.createElement('p');
+            note.textContent = message;
+            status.appendChild(note);
+
+            var row = document.createElement('div');
+            row.className = 'form-fallback';
+
+            if (waBase) {
+                var wa = document.createElement('a');
+                wa.className = 'btn btn--solid btn--sm';
+                wa.href = waBase + encodeURIComponent(body);
+                wa.target = '_blank';
+                wa.rel = 'noopener';
+                wa.textContent = 'שליחה בוואטסאפ';
+                row.appendChild(wa);
+            }
+
+            if (email) {
+                var mail = document.createElement('a');
+                mail.className = 'btn btn--line btn--sm';
+                mail.href = 'mailto:' + email +
+                    '?subject=' + encodeURIComponent('פנייה מהאתר' + (data.subject ? ': ' + data.subject : '')) +
+                    '&body=' + encodeURIComponent(body);
+                mail.textContent = 'שליחה במייל';
+                row.appendChild(mail);
+            }
+
+            if (phone) {
+                var tel = document.createElement('a');
+                tel.className = 'btn btn--line btn--sm';
+                tel.href = 'tel:' + phone.replace(/[^0-9+]/g, '');
+                tel.textContent = phone;
+                row.appendChild(tel);
+            }
+
+            status.appendChild(row);
+        };
+
         form.addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -253,15 +311,26 @@
                 body: JSON.stringify(Object.fromEntries(new FormData(form)))
             })
                 .then(function (res) {
-                    if (res.ok === false) throw new Error('bad status ' + res.status);
-                    return res.json().catch(function () { return {}; });
+                    return res.json()
+                        .catch(function () { return {}; })
+                        .then(function (body) {
+                            // Only a 2xx means the office actually received it. Anything
+                            // else must surface as a failure, never as a silent success.
+                            if (res.ok === false) {
+                                var err = new Error('contact endpoint ' + res.status);
+                                err.serverMessage = body.error;
+                                throw err;
+                            }
+                            return body;
+                        });
                 })
                 .then(function () {
                     form.reset();
                     say('תודה! ההודעה נשלחה. נחזור אליכם בהקדם.', true);
                 })
                 .catch(function () {
-                    say('אירעה תקלה בשליחה. אפשר להתקשר אלינו ל-09-8612894 או לכתוב ל-office@robas-law.co.il', false);
+                    // The form keeps its contents, so nothing the visitor typed is lost.
+                    offerFallback('לא הצלחנו לשלוח את הפנייה מהאתר. הפרטים שמילאתם שמורים כאן, אפשר לשלוח אותם בלחיצה אחת:');
                 })
                 .finally(function () {
                     if (submit !== null) {

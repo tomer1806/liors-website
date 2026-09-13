@@ -18,7 +18,8 @@
         <div class="split split--text-first" style="align-items:start">
             <div class="reveal">
                 <h2 class="t-h3 u-mb-m">השאירו פרטים ונחזור אליכם</h2>
-                <form class="contact-form" id="contactForm" novalidate>
+                <form class="contact-form" id="contactForm" novalidate
+                      data-fallback-wa="{{WA_BASE}}" data-fallback-email="{{email}}" data-fallback-phone="{{phone}}">
                     <div class="form-group">
                         <label for="name">שם מלא</label>
                         <input type="text" id="name" name="name" autocomplete="name" required>
@@ -34,6 +35,11 @@
                     <div class="form-group">
                         <label for="message">כיצד נוכל לעזור?</label>
                         <textarea id="message" name="message" rows="5"></textarea>
+                    </div>
+
+                    <div class="hp" aria-hidden="true">
+                        <label for="company">אל תמלאו שדה זה</label>
+                        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
                     </div>
 
                     <div>

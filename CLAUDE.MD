@@ -131,6 +131,75 @@ marked `"featured": true` also appear in a shorter form on the homepage.
   Bar's advertising rules (כללי לשכת עורכי הדין (פרסומת), התשס"א-2001). Lior should sign
   off on anything added here.
 
+## Verified facts about the lawyers (researched Sept 2026)
+
+Taken from the **Israel Bar Association member register** (israelbar.biz), matched to the
+firm by its phone number **09-8612894**. Do not replace these with numbers from the
+firm's old marketing copy, which was frozen in 2019 and is wrong in places.
+
+| Lawyer | Register name | Admitted | On the site |
+|--------|---------------|----------|-------------|
+| ליאור רובס | **אליאור רובס** (registry) / ליאור רובס (judgments) | **10/06/2004** | computed from `careerStartYear` |
+| שמואל שפיגלר | שמואל שפיגלר | **30/06/1975** | computed from `shpiglerAdmissionYear` |
+| אוליביה ד. אורנשטיין | אוליביה דוי אורנשטיין | **15/06/2006** | fixed year in the copy |
+| אורן אברהם | **could not be matched** | unknown | no seniority claim — see below |
+
+- Lior is listed in the Bar's open dataset as **מוסמך ייפוי כוח מתמשך**, which supports
+  the claim made on the POA pages.
+- The old copy said Lior had "17 years in the field, 15 of them as an active attorney".
+  The register shows he was admitted in 2004, so the two-number split was wrong and has
+  been replaced with one figure.
+
+### Case research — already done, September 2026. Do not redo it.
+
+Seven research passes covered the Supreme Court exhaustively and all eight District
+courts, for all four lawyers, 2021–2026. **Result: exactly one publishable case**, the
+one already on `notable-cases.html`. Before spending effort here again, read this:
+
+- **Free sources that work:** `judgments.org.il` (full text, indexes counsel lines,
+  `?s=<term>&type=judgment&paged=N`), `israelbar.biz` (Bar register, plain URLs),
+  `takdin.co.il` free search-results pages, `he.afiklaw.com`, `toledano.co.il`.
+- **Blocked or useless:** court.gov.il and supremedecisions.court.gov.il (bot-blocked),
+  Google/Bing/DuckDuckGo (CAPTCHA), Nevo and Takdin full documents (paywalled),
+  `psika.net` (now a sports-betting site), `psakdin.co.il` lawyer pages (a generic press
+  feed — its articles often carry `הכותב לא ייצג בתיק`; never cite them as wins).
+- **judgments.org.il gotchas:** its search is **contiguous-phrase, not AND**; it does not
+  normalise `"` vs `״` (sweep both); pagination hard-caps around 104 results; and it tags
+  **every** document `סוג מסמך: פסק דין` even when the body is an interlocutory `החלטה`.
+  Only the document body tells you what a decision actually is.
+- **Name traps:** Judge **אבישי רובס** (Deputy President, Haifa) and Judge **איתן
+  אורנשטיין** dominate surname searches · **עו״ד אור דויד רובס** and **עו״ד ליאור רוב**
+  are different lawyers · **נדב שפיגלר** also practises in Netanya · a ynet article under
+  Lior's name is **his own commentary, not his case**.
+
+**Cases examined and rejected** — do not publish any of these: ת״א 7256-01-23 (claim
+struck out, ₪42,500 costs against the firm's clients) · ת״א 20407-05-21 (dismissed on the
+merits, ₪60,000 costs against the client) · ת״א 24764-11-21 (s.79A, clients paid ₪55,000)
+· ת״א 13713-10-22 (s.79A, client ordered to pay; counsel identity unprovable) · רע״א
+55705-01-21 (the firm's clients abstained) · ת״א 65769-08-21 and ת״א 15339-04-23
+(interlocutory orders, no outcome) · תאד״מ 3681-05-25 and ת״א 16497-07-22 (consent
+outcomes, not wins).
+
+A large share of Israeli decisions are never published, so "not found" is not "does not
+exist" — but nothing else citable exists in the free record. The only way to add cases is
+to **ask the lawyers for case numbers** and verify each counsel line individually.
+
+### ⚠️ אורן אברהם — do not add a seniority claim or case list
+
+Nationally there are only **two** active members named אורן אברהם (admitted 2010 and
+2017) and **neither carries the firm's phone number**. The site's old line "חבר לשכת
+עורכי הדין מזה שש שנים" was already live in 2019, implying admission around 2013, which
+matches neither. It has been removed rather than corrected.
+
+**The address is not an identifier.** A second firm, **קובי אורן ושות׳**, occupies the
+same address *and the same floor* — הגביש 4, בית טיטניום, קומה א׳ — and lists
+`עו״ד אורן אברהם` among its owners. Any judgment naming "עו״ד אורן אברהם, הגביש 4 נתניה"
+is more likely theirs. The five registry cases under that name almost certainly belong to
+them. To fix this properly, ask him for his מספר רישיון / תאריך הסמכה.
+
+Also note: a well-known convicted fraudster shares the name and dominates search results
+for it. Worth knowing before building any SEO around the bare name.
+
 ## Caching
 
 `_headers` marks `/css/*`, `/js/*` and `/assets/*` immutable for a year. `build.js`

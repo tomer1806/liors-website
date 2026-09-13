@@ -47,7 +47,8 @@
             </div>
 
             <div class="reveal">
-                <form class="contact-form" id="contactForm" novalidate>
+                <form class="contact-form" id="contactForm" novalidate
+                      data-fallback-wa="{{WA_BASE}}" data-fallback-email="{{email}}" data-fallback-phone="{{phone}}">
                     <input type="hidden" name="subject" value="ייפוי כוח מתמשך">
                     <div class="form-group">
                         <label for="name">שם מלא של הממנה</label>
@@ -75,6 +76,11 @@
                     <div class="form-group">
                         <label for="message">משהו שחשוב שנדע מראש?</label>
                         <textarea id="message" name="message" rows="4"></textarea>
+                    </div>
+
+                    <div class="hp" aria-hidden="true">
+                        <label for="company">אל תמלאו שדה זה</label>
+                        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
                     </div>
 
                     <div>

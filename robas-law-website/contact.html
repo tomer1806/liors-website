@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=9ac1e84b">
+<link rel="stylesheet" href="css/style.css?v=8499405e">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -141,7 +141,8 @@
         <div class="split split--text-first" style="align-items:start">
             <div class="reveal">
                 <h2 class="t-h3 u-mb-m">השאירו פרטים ונחזור אליכם</h2>
-                <form class="contact-form" id="contactForm" novalidate>
+                <form class="contact-form" id="contactForm" novalidate
+                      data-fallback-wa="https://wa.me/972529757798?text=" data-fallback-email="office@robas-law.co.il" data-fallback-phone="09-8612894">
                     <div class="form-group">
                         <label for="name">שם מלא</label>
                         <input type="text" id="name" name="name" autocomplete="name" required>
@@ -157,6 +158,11 @@
                     <div class="form-group">
                         <label for="message">כיצד נוכל לעזור?</label>
                         <textarea id="message" name="message" rows="5"></textarea>
+                    </div>
+
+                    <div class="hp" aria-hidden="true">
+                        <label for="company">אל תמלאו שדה זה</label>
+                        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
                     </div>
 
                     <div>
@@ -298,6 +304,6 @@
 </div>
 
 
-<script src="js/main.js?v=b732239c" defer></script>
+<script src="js/main.js?v=c0a9dc7b" defer></script>
 </body>
 </html>

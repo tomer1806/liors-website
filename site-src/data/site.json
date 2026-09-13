@@ -22,9 +22,9 @@
   "facebook": "https://www.facebook.com/1432093250415826",
   "copyrightFrom": "2019",
 
-  "_experienceNote": "Seniority is computed at build time so nobody has to remember to bump it. careerStartYear is Lior's start in the field (2004, confirmed). barAdmissionYear is derived from the firm's own earlier wording — '17 years in the field, 15 of them as an active attorney' — i.e. a two-year gap. Correct it here if the real admission year differs.",
+  "_experienceNote": "Seniority is computed at build time so nobody has to remember to bump it. All three years below are taken from the Israel Bar Association's official member register (israelbar.biz), matched to the firm by its phone number 09-8612894 — not from the site's own older marketing copy. Lior: admitted 10/06/2004. Shpigler: 30/06/1975. Orenstein: 15/06/2006 (written as a fixed year in the copy, so it never goes stale). Oren Avraham deliberately has no year here: he could not be matched to a register entry, see photo-credits-style note in the README.",
   "careerStartYear": 2004,
-  "barAdmissionYear": 2006,
+  "shpiglerAdmissionYear": 1975,
 
   "nav": [
     { "label": "ראשי", "href": "index.html" },

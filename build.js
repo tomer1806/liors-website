@@ -99,6 +99,9 @@ function caseItem(c, compact) {
     const why = c.why && compact !== true
         ? `<p class="case__why">${c.why}</p>`
         : '';
+    const chain = c.chain && compact !== true
+        ? `<p class="case__chain">${c.chain}</p>`
+        : '';
     const bench = c.bench && compact !== true
         ? `<div class="case__meta-row"><span class="case__meta-label">המותב</span><span>${c.bench}</span></div>`
         : '';
@@ -114,6 +117,7 @@ function caseItem(c, compact) {
                     <h3 class="case__title">${c.title}</h3>
                     <p class="case__summary">${c.summary}</p>
                     ${holdings}
+                    ${chain}
                     ${why}
                     <div class="case__meta">
                         <div class="case__meta-row"><span class="case__meta-label">הייצוג</span><span>${c.role}</span></div>
@@ -191,7 +195,7 @@ function render(template, ctx) {
 
 const year = new Date().getFullYear();
 const yearsExperience = year - site.careerStartYear;
-const yearsAsLawyer = year - site.barAdmissionYear;
+const yearsShpigler = year - site.shpiglerAdmissionYear;
 const cssV = assetVersion('css/style.css');
 const jsV = assetVersion('js/main.js');
 let built = 0;
@@ -212,7 +216,7 @@ for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort
     const metaCtx = {
         YEAR: String(year),
         YEARS_EXPERIENCE: String(yearsExperience),
-        YEARS_AS_LAWYER: String(yearsAsLawyer),
+        YEARS_SHPIGLER: String(yearsShpigler),
     };
 
     const ctx = {
@@ -235,7 +239,7 @@ for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort
         WA_BASE:          waBase,
         YEAR:             String(year),
         YEARS_EXPERIENCE: String(yearsExperience),
-        YEARS_AS_LAWYER:  String(yearsAsLawyer),
+        YEARS_SHPIGLER:   String(yearsShpigler),
         CSS_V:            cssV,
         JS_V:             jsV,
     };

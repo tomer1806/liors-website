@@ -2,11 +2,13 @@
   "_comment": "Provenance record for the photography in robas-law-website/assets/photos/. Not rendered on the site — kept so the source of every image is documented if it is ever questioned. The Unsplash License permits free commercial use without attribution (https://unsplash.com/license). All six were downloaded, desaturated to 55% and contrast-adjusted to match the site palette, then served from this repo rather than hotlinked.",
 
   "firmOwned": [
-    { "file": "office-reception.jpg", "source": "Photograph supplied by the firm", "note": "Reception desk and waiting area. NOT YET ADDED TO THE REPO." },
-    { "file": "office-entrance.jpg", "source": "Photograph supplied by the firm", "note": "Entrance with the LR monogram wall. NOT YET ADDED TO THE REPO." }
+    { "file": "office-reception.jpg", "source": "Photograph supplied by the firm", "usedOn": "index.html hero (slide 1) + mid-page band", "note": "Reception desk and waiting area. This is the photograph the whole palette was sampled from: ink desk, oak floor, ochre chairs, the sea triptych. Not desaturated — the licensed imagery is graded toward this, not the other way round." },
+    { "file": "office-entrance.jpg", "source": "Photograph supplied by the firm", "usedOn": "index.html hero (slide 2)", "note": "Entrance with the LR monogram wall." }
   ],
 
   "licensed": [
+    { "file": "desk-warm.jpg",    "source": "Unsplash", "id": "photo-1679343801538-d15245515ac4", "usedOn": "lior.html",             "why": "Warm desk and blinds; matches the oak in the office palette. Used instead of a portrait, since there are none." },
+    { "file": "light-texture.jpg","source": "Unsplash", "id": "photo-1612196808827-9ff25cb6137a", "usedOn": "house-rules.html",      "why": "Abstract light through sheer fabric; a quiet break with no subject matter to misread." },
     { "file": "sea-horizon.jpg",  "source": "Unsplash", "id": "photo-1474540412665-1cdae210ae6b", "usedOn": "about.html",            "why": "Echoes the sea triptych hanging in the firm's own reception." },
     { "file": "colonnade.jpg",    "source": "Unsplash", "id": "photo-1586073054612-fdd6537fc6d4", "usedOn": "practice-areas.html",   "why": "Institutional architecture, chosen over the usual gavel or scales imagery." },
     { "file": "residential.jpg",  "source": "Unsplash", "id": "photo-1508750231060-b9d742a44b10", "usedOn": "real-estate.html",      "why": "Israeli apartment building, the actual subject of most of the firm's property work." },

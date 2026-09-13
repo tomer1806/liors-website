@@ -280,14 +280,33 @@ h1, h2, h3, h4 {
 .nav__menu {
     display: none;
     position: absolute;
-    top: calc(100% + 10px);
+    top: 100%;
     inset-inline-start: 50%;
     transform: translateX(50%);
     min-width: 210px;
     padding: 10px 0;
     background: var(--ink-2);
     border: 1px solid var(--line-dark);
+    /* The visual gap below the nav is a TRANSPARENT TOP BORDER, not empty space.
+       It still belongs to the element, so the pointer stays inside :hover while
+       travelling from the trigger down to the first item. background-clip keeps
+       the panel from painting up into it. A plain `top: calc(100% + 10px)` offset
+       creates a dead zone and the menu snaps shut halfway. */
+    border-top: 14px solid transparent;
+    background-clip: padding-box;
 }
+
+/* Widen the hover target sideways as well, so a diagonal move to a long
+   item like "טפסים והגשה" doesn't drop out of the trigger's column. */
+.nav__item--has-menu::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    inset-inline: -20px;
+    height: 16px;
+    pointer-events: none;
+}
+.nav__item--has-menu:hover::after { pointer-events: auto; }
 .nav__item:hover .nav__menu,
 .nav__item.is-open .nav__menu { display: block; }
 .nav__item:hover .nav__chev { transform: rotate(180deg); }
@@ -1364,4 +1383,30 @@ a.band__value:hover { color: var(--oak); }
     .nav, .m-nav, .fab, .band, .cta-banner, .hero__media, .hero__dots { display: none !important; }
     body { background: #fff; color: #000; }
     .reveal, .reveal-slide, .u-rise { opacity: 1 !important; transform: none !important; }
+}
+
+/* Honeypot: visible to bots, never to people or screen readers. */
+.hp {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.case__chain {
+    margin-top: 18px;
+    padding-inline-start: 18px;
+    border-inline-start: 1px solid var(--line);
+    font-size: .95rem;
+    color: var(--ink-mute);
+    max-width: 68ch;
+}
+
+.form-fallback {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
 }
