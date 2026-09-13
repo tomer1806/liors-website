@@ -43,6 +43,31 @@ function assetVersion(relPath) {
     return crypto.createHash('md5').update(fs.readFileSync(full)).digest('hex').slice(0, 8);
 }
 
+/* _headers caches /assets/* as immutable for a year. Without a content hash in the URL,
+   replacing a photo or a logo under the same filename would never reach anyone who had
+   already visited — they would keep the old file for twelve months. Stamping every
+   asset reference with a hash of the file's own bytes makes a changed file a changed
+   URL, so replacing an image Just Works. Forms under /assets/poa/ are excluded: they
+   are downloads whose URLs people may have bookmarked, and they are cached for a day
+   rather than a year anyway. */
+const assetHashes = new Map();
+
+function versionAssets(html) {
+    return html.replace(/((?:src|href)=")(assets\/[^"?#]+)(")/g, (whole, pre, rel, post) => {
+        if (rel.startsWith('assets/poa/')) return whole;
+
+        if (assetHashes.has(rel) === false) {
+            const full = path.join(OUT, rel);
+            assetHashes.set(rel, fs.existsSync(full)
+                ? crypto.createHash('md5').update(fs.readFileSync(full)).digest('hex').slice(0, 8)
+                : null);
+        }
+
+        const hash = assetHashes.get(rel);
+        return hash === null ? whole : `${pre}${rel}?v=${hash}${post}`;
+    });
+}
+
 /* Pull the {"..."} front-matter comment off the top of a page file. */
 function frontMatter(src, file) {
     const m = src.match(/^<!--@([\s\S]*?)@-->\s*/);
@@ -249,6 +274,7 @@ for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort
         // the body is substituted first, so pages may use tokens such as {{CLIENT_LOGOS}} too
         ctx.BODY = substitute(body.trimEnd(), ctx);
         html = render(read(PARTIALS, 'layout.html'), ctx);
+        html = versionAssets(html);
     } catch (e) {
         problems.push(`${file}: ${e.message}`);
         continue;
