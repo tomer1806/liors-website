@@ -7,7 +7,11 @@ Guidance for Claude Code when working in this repository.
 Website for **Lior Robas Law Firm & Notary** (משרד עורכי דין ונוטריון ליאור רובס).
 - Domain: robas-law.co.il
 - Hosting: Cloudflare Pages
-- Office: הגביש 4, בית טיטניום, קומה א', נתניה (Gavish 4, "Titanium Building", Floor 1, Netanya)
+- Office: שד׳ טום לנטוס 8, בית אופל, קומה חמישית, נתניה (Tom Lantos Blvd 8, "Opal House", 5th floor, Netanya)
+  - The firm has moved more than once: קראוזה 3 (to ~2019) → הגביש 4, בית טיטניום → the current address.
+  - Every form of the address lives in `site.json` (`address`, `addressShort`, `addressStreet`,
+    `addressCity`, `mapQuery`). The footer, hero, contact band, contact page, schema.org
+    JSON-LD and the Google Maps embed are all generated from those. Never hardcode it again.
 - Phone: 09-8612894 | Fax: 073-2758870 | Email: office@robas-law.co.il
 - WhatsApp: **052-975-7798** — a separate mobile line, NOT the office landline (`wa.me/972529757798`)
 - Hours: Sun–Thu, 9:00–18:00
@@ -192,10 +196,11 @@ Nationally there are only **two** active members named אורן אברהם (admi
 matches neither. It has been removed rather than corrected.
 
 **The address is not an identifier.** A second firm, **קובי אורן ושות׳**, occupies the
-same address *and the same floor* — הגביש 4, בית טיטניום, קומה א׳ — and lists
+the address the firm used to occupy, הגביש 4 בית טיטניום קומה א׳, and lists
 `עו״ד אורן אברהם` among its owners. Any judgment naming "עו״ד אורן אברהם, הגביש 4 נתניה"
-is more likely theirs. The five registry cases under that name almost certainly belong to
-them. To fix this properly, ask him for his מספר רישיון / תאריך הסמכה.
+is that firm's, not this one's — and since the firm has now moved to שד׳ טום לנטוס 8, a הגביש 4
+address in any record is a positive signal it is NOT this firm. The five registry cases under
+that name almost certainly belong to them. To fix this properly, ask him for his מספר רישיון / תאריך הסמכה.
 
 Also note: a well-known convicted fraudster shares the name and dominates search results
 for it. Worth knowing before building any SEO around the bare name.

@@ -35,6 +35,10 @@ const waHref = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(site.wh
    so the number itself still lives only in site.json. */
 const waBase = `https://wa.me/${site.whatsapp}?text=`;
 
+/* Derived from site.json so the map can never point at a different building
+   from the one printed on the page. */
+const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(site.mapQuery)}&hl=iw&output=embed`;
+
 /* _headers caches /css/* and /js/* as immutable for a year, so the URL has to
    change whenever the file does — otherwise returning visitors keep the old one. */
 function assetVersion(relPath) {
@@ -262,6 +266,7 @@ for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort
         BODY_CLASS:       meta.bodyClass || '',
         WA_HREF:          waHref,
         WA_BASE:          waBase,
+        MAP_SRC:          mapSrc,
         YEAR:             String(year),
         YEARS_EXPERIENCE: String(yearsExperience),
         YEARS_SHPIGLER:   String(yearsShpigler),
