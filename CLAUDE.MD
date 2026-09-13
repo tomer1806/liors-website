@@ -9,7 +9,7 @@ Website for **Lior Robas Law Firm & Notary** (משרד עורכי דין ונו�
 - Hosting: Cloudflare Pages
 - Office: הגביש 4, בית טיטניום, קומה א', נתניה (Gavish 4, "Titanium Building", Floor 1, Netanya)
 - Phone: 09-8612894 | Fax: 073-2758870 | Email: office@robas-law.co.il
-- WhatsApp: same as office phone, `wa.me/97298612894`
+- WhatsApp: **052-975-7798** — a separate mobile line, NOT the office landline (`wa.me/972529757798`)
 - Hours: Sun–Thu, 9:00–18:00
 - Facebook: facebook.com/1432093250415826
 
@@ -20,6 +20,7 @@ Never hand-edit `robas-law-website/*.html` — `node build.js` overwrites them.
 | To change | Edit | Then |
 |-----------|------|------|
 | Contact details, nav menu, client list | `site-src/data/site.json` | `node build.js` |
+| Notable cases (תיקים בולטים) | `site-src/data/cases.json` | `node build.js` |
 | Nav / footer / mobile menu / FAB markup | `site-src/partials/*.html` | `node build.js` |
 | A page's content | `site-src/pages/<page>.html` | `node build.js` |
 | Styling | `robas-law-website/css/style.css` | edit in place, then `node build.js` to refresh the cache-busting hash |
@@ -60,8 +61,13 @@ All tokens are CSS custom properties in `:root` at the top of `css/style.css`.
    reconsider the layout instead.
 2. **No photographs of the lawyers — ever.** There are none and there will be none.
    The team is a typographic roster (`.roster`). Never substitute stock portraits.
-3. **No stock photography at all.** The only photographs are the firm's own, in
-   `assets/photos/`.
+3. **Photography is licensed, architectural, and used as full-bleed bands.** The firm's
+   own photographs come first. Beyond those, only Unsplash-licensed images (free for
+   commercial use) are permitted, and only as `.band-photo` breaks between sections —
+   never as decorative cards, never people in suits, never gavels or scales. Every image
+   is downloaded into `assets/photos/`, graded to 55% saturation for a single consistent
+   look, and its provenance recorded in `site-src/data/photo-credits.json`. Never
+   hotlink, and never use an image whose licence you have not checked.
 4. **No invented numbers, testimonials, or bylines.** Every statistic and every quote
    must be traceable to the firm's own material. A testimonial without a real name is
    not published.
@@ -91,6 +97,7 @@ vocabulary for anything you write.
 | `about.html` | המשרד |
 | `lior.html` | עליי |
 | `practice-areas.html` | תחומי התמחות |
+| `notable-cases.html` | תיקים בולטים |
 | `clients.html` | לקוחות |
 | `real-estate.html` | ליווי עסקאות נדל״ן |
 | `commercial.html` | ייצוג חברות מסחריות |
@@ -105,6 +112,24 @@ vocabulary for anything you write.
 
 The old WordPress site had **eight** ייפוי־כוח־מתמשך pages; they are consolidated into
 four here, with 301s from all eight in `_redirects`.
+
+## Notable cases (תיקים בולטים)
+
+Entries live in `site-src/data/cases.json` and render on `notable-cases.html`; those
+marked `"featured": true` also appear in a shorter form on the homepage.
+
+**Publishing rules — these are not stylistic:**
+
+- Only publish a case that is verifiable from the judgment itself, or from material the
+  firm has already published publicly.
+- **Never state an outcome a source does not state.** "The firm appeared as counsel" is
+  not "the firm won". If the outcome is unclear, leave the case out.
+- Prefer the firm's own wording when describing what the court held.
+- Case numbers, dates, party names and the bench must be copied exactly, not recalled.
+- The disclaimer at the bottom of `notable-cases.html` stays. It notes that a result in
+  one case does not promise a result in another — relevant both to accuracy and to the
+  Bar's advertising rules (כללי לשכת עורכי הדין (פרסומת), התשס"א-2001). Lior should sign
+  off on anything added here.
 
 ## Caching
 

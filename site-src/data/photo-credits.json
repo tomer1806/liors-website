@@ -1,0 +1,17 @@
+{
+  "_comment": "Provenance record for the photography in robas-law-website/assets/photos/. Not rendered on the site — kept so the source of every image is documented if it is ever questioned. The Unsplash License permits free commercial use without attribution (https://unsplash.com/license). All six were downloaded, desaturated to 55% and contrast-adjusted to match the site palette, then served from this repo rather than hotlinked.",
+
+  "firmOwned": [
+    { "file": "office-reception.jpg", "source": "Photograph supplied by the firm", "note": "Reception desk and waiting area. NOT YET ADDED TO THE REPO." },
+    { "file": "office-entrance.jpg", "source": "Photograph supplied by the firm", "note": "Entrance with the LR monogram wall. NOT YET ADDED TO THE REPO." }
+  ],
+
+  "licensed": [
+    { "file": "sea-horizon.jpg",  "source": "Unsplash", "id": "photo-1474540412665-1cdae210ae6b", "usedOn": "about.html",            "why": "Echoes the sea triptych hanging in the firm's own reception." },
+    { "file": "colonnade.jpg",    "source": "Unsplash", "id": "photo-1586073054612-fdd6537fc6d4", "usedOn": "practice-areas.html",   "why": "Institutional architecture, chosen over the usual gavel or scales imagery." },
+    { "file": "residential.jpg",  "source": "Unsplash", "id": "photo-1508750231060-b9d742a44b10", "usedOn": "real-estate.html",      "why": "Israeli apartment building, the actual subject of most of the firm's property work." },
+    { "file": "architecture.jpg", "source": "Unsplash", "id": "photo-1522743791393-522312deeebf", "usedOn": "commercial.html",       "why": "Modern commercial building." },
+    { "file": "pen-writing.jpg",  "source": "Unsplash", "id": "photo-1455390582262-044cdead277a", "usedOn": "notary.html",           "why": "Nib and paper detail: signature and authentication without stock-photo people." },
+    { "file": "pen-nib.jpg",      "source": "Unsplash", "id": "photo-1518674660708-0e2c0473e68e", "usedOn": "power-of-attorney.html, poa-guide.html", "why": "Same material language, lighter frame." }
+  ]
+}

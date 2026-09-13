@@ -12,3 +12,8 @@
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Official forms can be reissued by the Ministry of Justice under the same
+# filename, so these are cached for a day rather than a year.
+/assets/poa/*
+  Cache-Control: public, max-age=86400, must-revalidate

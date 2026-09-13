@@ -9,7 +9,10 @@
 
   "phone": "09-8612894",
   "phoneHref": "tel:+97298612894",
-  "whatsapp": "97298612894",
+
+  "_whatsappNote": "WhatsApp is a separate mobile line, NOT the office landline. Keep `whatsapp` in international format with no + or dashes.",
+  "whatsapp": "972529757798",
+  "whatsappDisplay": "052-975-7798",
   "whatsappText": "שלום, פונה אליכם מהאתר",
   "fax": "073-2758870",
   "email": "office@robas-law.co.il",
@@ -19,11 +22,16 @@
   "facebook": "https://www.facebook.com/1432093250415826",
   "copyrightFrom": "2019",
 
+  "_experienceNote": "Seniority is computed at build time so nobody has to remember to bump it. careerStartYear is Lior's start in the field (2004, confirmed). barAdmissionYear is derived from the firm's own earlier wording — '17 years in the field, 15 of them as an active attorney' — i.e. a two-year gap. Correct it here if the real admission year differs.",
+  "careerStartYear": 2004,
+  "barAdmissionYear": 2006,
+
   "nav": [
     { "label": "ראשי", "href": "index.html" },
     { "label": "אודות", "href": "about.html", "children": [
       { "label": "המשרד", "href": "about.html" },
       { "label": "תחומי התמחות", "href": "practice-areas.html" },
+      { "label": "תיקים בולטים", "href": "notable-cases.html" },
       { "label": "לקוחות", "href": "clients.html" },
       { "label": "עליי", "href": "lior.html" }
     ]},
@@ -51,6 +59,7 @@
   "footerOffice": [
     { "label": "אודות המשרד", "href": "about.html" },
     { "label": "עליי", "href": "lior.html" },
+    { "label": "תיקים בולטים", "href": "notable-cases.html" },
     { "label": "לקוחות", "href": "clients.html" },
     { "label": "חוקי הבית", "href": "house-rules.html" },
     { "label": "הצהרת פרטיות", "href": "privacy.html" }

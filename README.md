@@ -10,6 +10,7 @@ Vanilla HTML/CSS/JS, Hebrew RTL, deployed on Cloudflare Pages.
 ```
 site-src/                     ← EDIT HERE
 ├── data/site.json            phone, fax, email, address, hours, nav tree, client list
+├── data/cases.json           תיקים בולטים — notable cases
 ├── partials/                 layout, nav, mobile-menu, contact-band, footer, fab
 └── pages/                    per-page content only (front-matter + body)
 
@@ -77,6 +78,11 @@ from it, so there is nothing to keep in sync by hand.
   "transparentNav": true       optional — nav sits over the hero (homepage only)
 } @-->
 ```
+
+### Adding a notable case
+Append an entry to `site-src/data/cases.json` and rebuild. `"featured": true` also puts
+it on the homepage. Only publish what the judgment or the firm's own published material
+actually states — never an outcome you inferred.
 
 ### Colours and type
 CSS custom properties in `:root` at the top of `robas-law-website/css/style.css`.

@@ -1,6 +1,6 @@
 <!--@ {
-  "title": "ייפוי כוח מתמשך — טפסים והגשה | ליאור רובס",
-  "description": "הטפסים הנדרשים לעריכת ייפוי כוח מתמשך, תהליך ההפקדה באפוטרופוס הכללי והגשה מקוונת — בארבעה צעדים.",
+  "title": "ייפוי כוח מתמשך: טפסים והגשה | ליאור רובס",
+  "description": "כל הטפסים להורדה לייפוי כוח מתמשך, תהליך ההפקדה אצל האפוטרופוס הכללי, והתחלת התהליך אונליין מול המשרד.",
   "nav": "poa-forms.html"
 } @-->
 
@@ -8,19 +8,90 @@
     <div class="container">
         <div class="page-header__breadcrumb"><a href="index.html">ראשי</a> / <a href="power-of-attorney.html">ייפוי כוח מתמשך</a> / טפסים והגשה</div>
         <h1 class="page-header__title">טפסים והגשה</h1>
-        <p class="page-header__subtitle">מה צריך להביא, איך נראה התהליך ומה קורה אחרי החתימה</p>
+        <p class="page-header__subtitle">כל הטפסים במקום אחד, מה התהליך כולל, ואיך מתחילים אונליין</p>
         <div class="page-header__gold-line"></div>
     </div>
 </section>
 
+<!-- DOWNLOADS -->
 <section class="section">
-    <div class="container content-page">
-        <p class="reveal">ייפוי כוח מתמשך נערך על גבי טופס רשמי של האפוטרופוס הכללי במשרד המשפטים, ונחתם אך ורק בפני עורך דין שעבר הכשרה ייעודית וקיבל הסמכה לעריכת ייפוי כוח מתמשך. לאחר החתימה המסמך מופקד אצל האפוטרופוס הכללי, ורק ההפקדה מקנה לו תוקף.</p>
-
-        <div class="callout reveal">
-            <p><strong>חשוב לדעת:</strong> אין צורך להוריד או למלא טפסים מראש. במסגרת הפגישה במשרד אנחנו עורכים את המסמך יחד אתכם, מתאימים אותו לרצונות ולנסיבות שלכם, ודואגים להפקדה מול האפוטרופוס הכללי.</p>
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow reveal">טפסים להורדה</span>
+            <h2 class="t-h2 reveal">כל הטפסים הנדרשים, במקום אחד</h2>
+            <p class="lede reveal u-mt-m">ריכזנו כאן את טפסי האפוטרופוס הכללי הנדרשים בהליך, כדי לחסוך לכם חיפושים. אין צורך למלא אותם מראש: בפגישה נערוך את המסמך יחד אתכם ונתאים אותו לנסיבות שלכם.</p>
         </div>
 
+        <div class="dl-groups">
+            {{POA_DOWNLOADS}}
+        </div>
+
+        <p class="u-fine u-mt-l">הטפסים מפורסמים על ידי האפוטרופוס הכללי במשרד המשפטים ועשויים להתעדכן מעת לעת. אם אתם ניגשים להליך, ודאו מולנו שבידיכם הגרסה העדכנית.</p>
+    </div>
+</section>
+
+<!-- ONLINE START -->
+<section class="section section--white" id="online">
+    <div class="container">
+        <div class="split split--text-first" style="align-items:start">
+            <div class="reveal">
+                <span class="eyebrow">התחלה אונליין</span>
+                <h2 class="t-h2 u-mb-s">להתחיל את התהליך מכאן</h2>
+                <p class="u-mb-s">אפשר להתניע את ההליך אונליין ולחסוך את השיחה הראשונה. השאירו פרטים, ואנחנו נחזור אליכם עם הסבר מלא, הצעת מחיר ומועד לפגישה.</p>
+
+                <div class="callout">
+                    <p><strong>שימו לב:</strong> לפי חוק, ייפוי כוח מתמשך נחתם אך ורק בפגישה פרונטלית מול עורך דין שהוסמך לכך, שתפקידו לוודא שאתם מבינים את המסמך ופועלים מרצון חופשי. הטופס כאן נועד לפתוח את התהליך, לא להחליף את הפגישה.</p>
+                </div>
+
+                <p class="u-fine">את ההפקדה עצמה מול האפוטרופוס הכללי אנחנו מבצעים עבורכם בהגשה מקוונת בתום התהליך.</p>
+            </div>
+
+            <div class="reveal">
+                <form class="contact-form" id="contactForm" novalidate>
+                    <input type="hidden" name="subject" value="ייפוי כוח מתמשך">
+                    <div class="form-group">
+                        <label for="name">שם מלא של הממנה</label>
+                        <input type="text" id="name" name="name" autocomplete="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">טלפון</label>
+                        <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">דוא״ל</label>
+                        <input type="email" id="email" name="email" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="scope">אילו תחומים תרצו לכלול?</label>
+                        <select id="scope" name="scope">
+                            <option value="">בחרו אפשרות</option>
+                            <option>רכוש</option>
+                            <option>ענייני בריאות</option>
+                            <option>עניינים אישיים</option>
+                            <option>כל התחומים</option>
+                            <option>עדיין לא בטוח/ה</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">משהו שחשוב שנדע מראש?</label>
+                        <textarea id="message" name="message" rows="4"></textarea>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn--solid btn--lg">שליחה</button>
+                    </div>
+
+                    <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+                    <p class="u-fine">לא נעביר את הפרטים שלכם הלאה, והם לא ישמשו לכל מטרה פרט לפנייה שלנו אליכם. <a href="privacy.html">הצהרת פרטיות</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section">
+    <div class="container content-page">
         <h2 class="reveal">התהליך בארבעה צעדים</h2>
 
         <div class="steps-list reveal">
@@ -28,14 +99,14 @@
                 <span class="step-item__number">01</span>
                 <div class="step-item__content">
                     <h3>פגישת ייעוץ</h3>
-                    <p>נבין מה חשוב לכם, מי האנשים שאתם סומכים עליהם, ואילו תחומים אתם רוצים לכלול — רכוש, ענייני בריאות, עניינים אישיים, או כולם יחד.</p>
+                    <p>נבין מה חשוב לכם, מי האנשים שאתם סומכים עליהם, ואילו תחומים אתם רוצים לכלול: רכוש, ענייני בריאות, עניינים אישיים, או כולם יחד.</p>
                 </div>
             </div>
             <div class="step-item">
                 <span class="step-item__number">02</span>
                 <div class="step-item__content">
                     <h3>עריכת המסמך וההנחיות המקדימות</h3>
-                    <p>ניסוח ייפוי הכוח על גבי הטופס הרשמי, לרבות הנחיות מקדימות — הוראות קונקרטיות שקובעות כיצד מיופה הכוח יפעל במצבים מסוימים.</p>
+                    <p>ניסוח ייפוי הכוח על גבי הטופס הרשמי, לרבות הנחיות מקדימות, כלומר הוראות קונקרטיות שקובעות כיצד מיופה הכוח יפעל במצבים מסוימים.</p>
                 </div>
             </div>
             <div class="step-item">
@@ -58,9 +129,9 @@
 
         <ul class="reveal">
             <li>תעודת זהות שלכם, בתוקף</li>
-            <li>פרטי מיופה הכוח שבחרתם — שם מלא, מספר תעודת זהות וכתובת</li>
+            <li>פרטי מיופה הכוח שבחרתם: שם מלא, מספר תעודת זהות וכתובת</li>
             <li>פרטי מיופה כוח חליפי, אם תרצו לקבוע כזה</li>
-            <li>פרטי אדם מיודע — מי שיקבל דיווח על הפעלת ייפוי הכוח</li>
+            <li>פרטי אדם מיודע, מי שיקבל דיווח על הפעלת ייפוי הכוח</li>
             <li>מחשבה מוקדמת על ההנחיות המקדימות שחשובות לכם</li>
         </ul>
 
@@ -70,10 +141,10 @@
         <p class="reveal">כן. כל עוד אתם מבינים את משמעות הפעולה, אתם רשאים לשנות את ייפוי הכוח או לבטל אותו בכל עת, בהודעה בכתב למיופה הכוח ולאפוטרופוס הכללי.</p>
 
         <h3 class="reveal">מתי ייפוי הכוח נכנס לתוקף?</h3>
-        <p class="reveal">רק כאשר מתקיימות הנסיבות שקבעתם מראש — בדרך כלל כשאינכם מסוגלים עוד להבין בעניין שלגביו ניתן ייפוי הכוח. עד אז המסמך מופקד ואינו מפעיל דבר.</p>
+        <p class="reveal">רק כאשר מתקיימות הנסיבות שקבעתם מראש, בדרך כלל כשאינכם מסוגלים עוד להבין בעניין שלגביו ניתן ייפוי הכוח. עד אז המסמך מופקד ואינו מפעיל דבר.</p>
 
         <h3 class="reveal">האם אפשר למנות יותר ממיופה כוח אחד?</h3>
-        <p class="reveal">כן. אפשר למנות כמה מיופי כוח — במשותף או בנפרד, לתחומים שונים — ולקבוע מיופה כוח חליפי למקרה שהראשון לא יוכל לשמש בתפקידו.</p>
+        <p class="reveal">כן. אפשר למנות כמה מיופי כוח, במשותף או בנפרד, לתחומים שונים, ולקבוע מיופה כוח חליפי למקרה שהראשון לא יוכל לשמש בתפקידו.</p>
 
         <p class="reveal"><a href="poa-guide.html" class="btn btn--quiet">למדריך המלא לייפוי כוח מתמשך</a></p>
     </div>

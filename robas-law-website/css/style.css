@@ -608,6 +608,146 @@ a.service-card:hover { background: var(--paper); }
 }
 
 /* ============================================================
+   DOWNLOADS
+   ============================================================ */
+
+.dl-groups { display: grid; gap: clamp(36px, 5vw, 56px); }
+.dl-group__title { font-size: 1.15rem; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.dl-group__note { font-size: .95rem; color: var(--ink-mute); margin-bottom: 18px; max-width: 62ch; }
+
+.dl-list { border-top: 1px solid var(--line); }
+
+.dl {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    transition: background var(--t), padding-inline var(--t);
+}
+.dl:hover { background: rgba(198, 154, 95, 0.06); }
+
+.dl__name { color: var(--ink); font-size: 1rem; }
+.dl__meta { display: flex; align-items: center; gap: 10px; }
+.dl__ext {
+    font-family: var(--font-latin);
+    font-size: .68rem;
+    font-weight: 400;
+    letter-spacing: .12em;
+    color: var(--ink-mute);
+    padding: 3px 8px;
+    border: 1px solid var(--line);
+}
+/* "284 KB" is a left-to-right run; without isolation RTL flips it to "KB 284" */
+.dl__size {
+    font-size: .8rem;
+    color: var(--ink-mute);
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+.dl__icon { color: var(--oak-deep); flex-shrink: 0; }
+
+/* ============================================================
+   NOTABLE CASES
+   ============================================================ */
+
+.case-list { border-top: 1px solid var(--line); }
+
+.case {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: clamp(20px, 4vw, 56px);
+    padding: clamp(32px, 4.5vw, 56px) 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.case__aside { display: flex; flex-direction: column; gap: 7px; }
+.case__year {
+    font-family: var(--font-latin);
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    font-weight: 200;
+    line-height: 1;
+    color: var(--ink);
+}
+.case__court { font-size: .95rem; color: var(--ink); }
+.case__no {
+    font-size: .8rem;
+    letter-spacing: .04em;
+    color: var(--ink-mute);
+    direction: ltr;
+    text-align: start;
+    unicode-bidi: plaintext;
+}
+
+.case__area {
+    display: block;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .18em;
+    color: var(--oak-deep);
+    margin-bottom: 12px;
+}
+.case__title {
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    font-weight: 300;
+    color: var(--ink);
+    margin-bottom: 14px;
+}
+.case__summary { max-width: 68ch; }
+
+.case__holdings { margin: 22px 0 0; }
+.case__holdings li {
+    position: relative;
+    padding-inline-start: 24px;
+    margin-bottom: 12px;
+    max-width: 68ch;
+    color: var(--ink);
+}
+.case__holdings li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: .8em;
+    width: 12px;
+    height: 1px;
+    background: var(--oak);
+}
+
+.case__why {
+    margin-top: 20px;
+    padding: 18px 22px;
+    background: var(--white);
+    border-inline-start: 2px solid var(--oak);
+    font-size: .97rem;
+    max-width: 68ch;
+}
+
+.case__meta { margin-top: 26px; border-top: 1px solid var(--line); }
+.case__meta-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 14px;
+    padding: 11px 0;
+    font-size: .92rem;
+    border-bottom: 1px solid var(--line-soft);
+}
+.case__meta-row:last-child { border-bottom: 0; }
+.case__meta-label { font-size: .7rem; font-weight: 600; letter-spacing: .16em; color: var(--ink-mute); padding-top: 3px; }
+
+.case-disclaimer {
+    margin-top: 36px;
+    max-width: 78ch;
+    font-size: .84rem;
+    line-height: 1.7;
+    color: var(--ink-mute);
+}
+
+/* compact variant used for the homepage preview */
+.section--white .case__why { background: var(--paper); }
+
+/* ============================================================
    ROSTER — the team, deliberately photo-free
    ============================================================ */
 
@@ -778,38 +918,85 @@ a.service-card:hover { background: var(--paper); }
    STATEMENT (pull quote on ink)
    ============================================================ */
 
-.quote-block { max-width: 900px; }
+/* Default is ink on a light section. White is applied only where the
+   background is actually dark — the reverse used to be true, which left
+   these quotes invisible on every light page that used them. */
+.quote-block {
+    max-width: 900px;
+    padding-inline-start: 24px;
+    border-inline-start: 2px solid var(--oak);
+}
 .quote-block__text {
-    font-size: clamp(1.25rem, 2.6vw, 2rem);
+    font-size: clamp(1.2rem, 2.4vw, 1.85rem);
     font-weight: 200;
     line-height: 1.5;
-    color: var(--white);
+    color: var(--ink);
 }
 .quote-block__author {
     display: block;
-    margin-top: 26px;
-    padding-top: 22px;
-    border-top: 1px solid var(--line-dark);
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
     font-size: .74rem;
     font-weight: 600;
     letter-spacing: .18em;
-    color: var(--oak);
+    color: var(--oak-deep);
 }
+
+.section--ink .quote-block,
+.section--navy .quote-block,
+.cta-banner .quote-block { border-inline-start-color: var(--oak); }
+
+.section--ink .quote-block__text,
+.section--navy .quote-block__text,
+.cta-banner .quote-block__text { color: var(--white); }
+
+.section--ink .quote-block__author,
+.section--navy .quote-block__author,
+.cta-banner .quote-block__author { color: var(--oak); border-top-color: var(--line-dark); }
 
 /* ============================================================
    VALUES / STEPS / STATS
    ============================================================ */
 
-.values-grid {
+/* House rules: rows, not a grid — five items can't leave a sixth cell empty. */
+.houserules { border-top: 1px solid var(--line); }
+
+.houserule {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: clamp(14px, 4vw, 56px);
+    padding: clamp(28px, 4vw, 48px) 0;
+    border-bottom: 1px solid var(--line);
 }
-.value-card { padding: clamp(26px, 3vw, 38px); background: var(--white); }
-.value-card__title { font-size: 1.1rem; font-weight: 400; color: var(--ink); margin-bottom: 10px; }
-.value-card__text { font-size: .96rem; color: var(--ink-mute); }
+
+.houserule__head { display: flex; align-items: baseline; gap: 14px; }
+.houserule__num {
+    font-family: var(--font-latin);
+    font-size: .95rem;
+    font-weight: 300;
+    letter-spacing: .1em;
+    color: var(--oak-deep);
+}
+.houserule__title {
+    font-size: clamp(1.25rem, 2.3vw, 1.7rem);
+    font-weight: 300;
+    color: var(--ink);
+}
+
+.houserule__body > p { max-width: 62ch; }
+.houserule__quote {
+    max-width: 62ch;
+    margin-bottom: 18px;
+    padding-inline-start: 20px;
+    border-inline-start: 2px solid var(--oak);
+    font-size: clamp(1.05rem, 1.7vw, 1.2rem);
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--ink);
+}
+.houserule__quote::before { content: '״'; }
+.houserule__quote::after { content: '״'; }
 
 .steps-list { border-top: 1px solid var(--line); }
 .step-item {
@@ -1122,7 +1309,7 @@ a.band__value:hover { color: var(--oak); }
 }
 
 @media (max-width: 980px) {
-    .services-grid, .values-grid { grid-template-columns: repeat(2, 1fr); }
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
     .clients__grid { grid-template-columns: repeat(3, 1fr); }
     .clients-grid { grid-template-columns: repeat(2, 1fr); }
     .footer__grid { grid-template-columns: repeat(2, 1fr); }
@@ -1132,10 +1319,15 @@ a.band__value:hover { color: var(--oak); }
 @media (max-width: 760px) {
     body { font-size: 1rem; }
     .split, .split--text-first, .about__grid { grid-template-columns: 1fr; }
-    .services-grid, .values-grid, .team-grid { grid-template-columns: 1fr; }
+    .services-grid, .team-grid { grid-template-columns: 1fr; }
+    .houserule { grid-template-columns: 1fr; gap: 14px; }
     .clients__grid { grid-template-columns: repeat(2, 1fr); }
     .clients-grid { grid-template-columns: 1fr; }
     .roster__row { grid-template-columns: 1fr; gap: 12px; }
+    .case { grid-template-columns: 1fr; gap: 16px; }
+    .case__aside { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; }
+    .case__year { font-size: 1.5rem; }
+    .case__meta-row { grid-template-columns: 1fr; gap: 2px; }
     .index-row { grid-template-columns: 40px 1fr; }
     .index-row__go { display: none; }
     .step-item { grid-template-columns: 40px 1fr; }

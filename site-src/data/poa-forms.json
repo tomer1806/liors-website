@@ -1,0 +1,40 @@
+{
+  "_comment": "Downloadable ייפוי כוח מתמשך forms. Files live in robas-law-website/assets/poa/ and are served from this site, so they survive the WordPress site being retired. `size` is in KB and is recalculated by build.js from the file itself — the value here is ignored.",
+
+  "groups": [
+    {
+      "title": "חובה לצרף להסכם",
+      "note": "מסמכים שהחוק מחייב לצרף לייפוי כוח מתמשך.",
+      "files": [
+        { "file": "vitur-sodiyut.pdf", "name": "כתב ויתור על סודיות של מיופה הכוח" }
+      ]
+    },
+    {
+      "title": "הטפסים הרשמיים",
+      "note": "טפסי האפוטרופוס הכללי שבהם נערך ייפוי הכוח וההנחיות הנלוות לו.",
+      "files": [
+        { "file": "form-a-general.pdf", "name": "טופס א׳: ייפוי כוח מתמשך (כללי)" },
+        { "file": "form-b-preliminary-directives.docx", "name": "טופס ב׳: הנחיות מקדימות לצורך מינוי אפוטרופוס" },
+        { "file": "form-c-expression-of-will.docx", "name": "טופס ג׳: מסמך הבעת רצון" },
+        { "file": "form-d-medical-single.pdf", "name": "טופס ד׳: ייפוי כוח רפואי, מיופה כוח יחיד" },
+        { "file": "form-d-medical-multiple.pdf", "name": "טופס ד׳: ייפוי כוח רפואי, מספר מיופי כוח" }
+      ]
+    },
+    {
+      "title": "כניסה לתוקף",
+      "note": "ההצהרה שמגישים כאשר מתקיימות הנסיבות שבגללן ייפוי הכוח נכנס לפעולה.",
+      "files": [
+        { "file": "entry-into-force-handwritten.pdf", "name": "הצהרה על כניסה לתוקף (מילוי ידני)" },
+        { "file": "entry-into-force-typed.docx", "name": "הצהרה על כניסה לתוקף (מילוי בהקלדה)" }
+      ]
+    },
+    {
+      "title": "תלונה על מיופה כוח",
+      "note": "אם מיופה הכוח אינו פועל כנדרש, אלה המסמכים להגשת תלונה לאפוטרופוס הכללי.",
+      "files": [
+        { "file": "complaint-info-sheet.pdf", "name": "דף מידע למגיש תלונה על מיופה כוח" },
+        { "file": "complaint-form.pdf", "name": "טופס להגשת תלונה על מיופה כוח" }
+      ]
+    }
+  ]
+}
