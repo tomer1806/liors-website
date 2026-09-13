@@ -60,7 +60,7 @@ IP: ${ip}
                     },
                     body: new URLSearchParams({
                         from: `אתר רובס <noreply@${env.MAILGUN_DOMAIN}>`,
-                        to: env.NOTIFICATION_EMAIL || 'lior@robas-law.co.il',
+                        to: env.NOTIFICATION_EMAIL || 'office@robas-law.co.il',
                         subject: `פנייה חדשה מ${name}`,
                         text: notificationBody,
                     }),

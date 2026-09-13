@@ -1,0 +1,73 @@
+{
+  "_comment": "Single source of truth for everything that used to be hardcoded in 13 HTML files. Edit here, then run `node build.js`.",
+
+  "name": "ליאור רובס",
+  "nameLatin": "LIOR ROBAS",
+  "tagline": "משרד עורכי דין ונוטריון",
+  "taglineLatin": "LAW FIRM &amp; NOTARY",
+  "domain": "https://robas-law.co.il",
+
+  "phone": "09-8612894",
+  "phoneHref": "tel:+97298612894",
+  "whatsapp": "97298612894",
+  "whatsappText": "שלום, פונה אליכם מהאתר",
+  "fax": "073-2758870",
+  "email": "office@robas-law.co.il",
+  "address": "הגביש 4, בית טיטניום, קומה א׳, נתניה",
+  "addressShort": "הגביש 4, בית טיטניום, נתניה",
+  "hours": "ימים א׳–ה׳, 9:00–18:00",
+  "facebook": "https://www.facebook.com/1432093250415826",
+  "copyrightFrom": "2019",
+
+  "nav": [
+    { "label": "ראשי", "href": "index.html" },
+    { "label": "אודות", "href": "about.html", "children": [
+      { "label": "המשרד", "href": "about.html" },
+      { "label": "תחומי התמחות", "href": "practice-areas.html" },
+      { "label": "לקוחות", "href": "clients.html" },
+      { "label": "עליי", "href": "lior.html" }
+    ]},
+    { "label": "ליווי עסקאות נדל״ן", "href": "real-estate.html" },
+    { "label": "ייצוג חברות מסחריות", "href": "commercial.html" },
+    { "label": "שירותי נוטריון", "href": "notary.html" },
+    { "label": "ייפוי כוח מתמשך", "href": "power-of-attorney.html", "children": [
+      { "label": "איך זה עובד?", "href": "power-of-attorney.html" },
+      { "label": "המדריך המלא", "href": "poa-guide.html" },
+      { "label": "טפסים והגשה", "href": "poa-forms.html" },
+      { "label": "ייפוי כוח רפואי", "href": "poa-medical.html" }
+    ]},
+    { "label": "חוקי הבית", "href": "house-rules.html" },
+    { "label": "צור קשר", "href": "contact.html" }
+  ],
+
+  "footerServices": [
+    { "label": "ליווי עסקאות נדל״ן", "href": "real-estate.html" },
+    { "label": "ייצוג חברות מסחריות", "href": "commercial.html" },
+    { "label": "שירותי נוטריון", "href": "notary.html" },
+    { "label": "ייפוי כוח מתמשך", "href": "power-of-attorney.html" },
+    { "label": "כל תחומי ההתמחות", "href": "practice-areas.html" }
+  ],
+
+  "footerOffice": [
+    { "label": "אודות המשרד", "href": "about.html" },
+    { "label": "עליי", "href": "lior.html" },
+    { "label": "לקוחות", "href": "clients.html" },
+    { "label": "חוקי הבית", "href": "house-rules.html" },
+    { "label": "הצהרת פרטיות", "href": "privacy.html" }
+  ],
+
+  "clients": [
+    { "slug": "hapoalim",       "name": "בנק הפועלים בע״מ" },
+    { "slug": "beinleumi",      "name": "בנק הבינלאומי הראשון לישראל בע״מ" },
+    { "slug": "pagi",           "name": "בנק פועלי אגודת ישראל" },
+    { "slug": "shirbit",        "name": "שירביט חברה לביטוח בע״מ" },
+    { "slug": "manpower",       "name": "קבוצת מנפאואר ישראל" },
+    { "slug": "kaymera",        "name": "קאימרה טכנולוגיות בע״מ" },
+    { "slug": "hinuma-motors",  "name": "הינומה מוטורס" },
+    { "slug": "ofek-maarachot", "name": "אופק מערכות" },
+    { "slug": "obzotek",        "name": "אובזוטק אקוסטיקה" },
+    { "slug": "shivuk-hamea",   "name": "שיווק המאה בע״מ" },
+    { "slug": "miss-nrg",       "name": "MISS N.R.G" },
+    { "slug": "ci-research",    "name": "מידע שיווקי סי.איי. בע״מ" }
+  ]
+}

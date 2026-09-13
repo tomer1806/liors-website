@@ -1,22 +1,37 @@
 # www redirect is handled via Cloudflare DNS settings
 # Only relative URLs are allowed here
 
-# Legacy WordPress URL redirects (from old site)
-/odot/ /about.html 301
-/member/lior-robas/ /lior.html 301
-/real-estate-service/ /real-estate.html 301
-/representation_of_commercial_companies/ /commercial.html 301
-/notary-services/ /notary.html 301
-/notary-service/ /notary.html 301
-/continuous-power-of-attorney-how-does-it-work/ /power-of-attorney.html 301
-/continuous-power-of-attorney-full-guide/ /poa-guide.html 301
-/continuous-power-of-attorney-sample-form-2/ /power-of-attorney.html 301
-/continuous-power-of-attorney-explanation-form/ /power-of-attorney.html 301
-/continuous-power-of-attorney-explanation-form-2/ /power-of-attorney.html 301
-/continuous-power-of-attorney-download/ /power-of-attorney.html 301
-/house-rules/ /house-rules.html 301
-/contact-us/ /contact.html 301
-/about-us/ /about.html 301
-/customers/ /clients.html 301
-/practice-areas/ /practice-areas.html 301
-/privacy-policy/ /privacy.html 301
+# --- Legacy WordPress URLs (from the old robas-law.co.il) ---
+/odot/                                        /about.html              301
+/about-us/                                    /about.html              301
+/member/lior-robas/                           /lior.html               301
+/author/robas-law/                            /lior.html               301
+/practice-areas/                              /practice-areas.html     301
+/customers/                                   /clients.html            301
+/real-estate-service/                         /real-estate.html        301
+/representation_of_commercial_companies/      /commercial.html         301
+/notary-services/                             /notary.html             301
+/notary-service/                              /notary.html             301
+/house-rules/                                 /house-rules.html        301
+/contact-us/                                  /contact.html            301
+/privacy-policy/                              /privacy.html            301
+
+# --- Continuous power of attorney: 8 legacy pages folded into 4 ---
+/continuous-power-of-attorney-how-does-it-work/   /power-of-attorney.html  301
+/continuous-power-of-attorney-full-guide/         /poa-guide.html          301
+/continuous-power-of-attorney-sample-form-2/      /poa-forms.html          301
+/continuous-power-of-attorney-explanation-form/   /poa-forms.html          301
+/continuous-power-of-attorney-explanation-form-2/ /poa-forms.html          301
+/continuous-power-of-attorney-download/           /poa-forms.html          301
+# ייפוי-כוח-מתמשך-רפואי
+/%d7%99%d7%99%d7%a4%d7%95%d7%99-%d7%9b%d7%95%d7%97-%d7%9e%d7%aa%d7%9e%d7%a9%d7%9a-%d7%a8%d7%a4%d7%95%d7%90%d7%99/ /poa-medical.html 301
+# ייפוי-כוח-מתמשך-לקבל-החלטות-על-העתיד-של
+/%d7%99%d7%99%d7%a4%d7%95%d7%99-%d7%9b%d7%95%d7%97-%d7%9e%d7%aa%d7%9e%d7%a9%d7%9a-%d7%9c%d7%a7%d7%91%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%95%d7%aa-%d7%a2%d7%9c-%d7%94%d7%a2%d7%aa%d7%99%d7%93-%d7%a9%d7%9c/ /power-of-attorney.html 301
+
+# --- WordPress leftovers: send crawlers home rather than to a 404 ---
+/wp-content/*   /   301
+/wp-admin/*     /   301
+/wp-login.php   /   301
+/feed/          /   301
+/category/*     /   301
+/tag/*          /   301

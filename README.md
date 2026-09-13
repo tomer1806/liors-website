@@ -1,219 +1,141 @@
 # Robas Law — Website
 
-Modern, responsive website for **Lior Robas Law Firm & Notary** (משרד עורכי דין ונוטריון ליאור רובס).  
-Built with vanilla HTML/CSS/JS — zero dependencies, zero build step, instant deploy.
+Website for **משרד עורכי דין ונוטריון ליאור רובס** (Lior Robas Law Firm & Notary), Netanya.
+Vanilla HTML/CSS/JS, Hebrew RTL, deployed on Cloudflare Pages.
 
 ---
 
-## Quick Start
-
-### Option 1: Local Preview
-1. Download/unzip the project
-2. Open `index.html` in any browser
-3. Everything works locally (images load from Unsplash CDN)
-
-### Option 2: Deploy to Cloudflare Pages
-1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages**
-2. Choose **Upload assets**
-3. Name the project (e.g. `robas-law`) — you'll get `robas-law.pages.dev` as test URL
-4. Upload the ZIP or drag the unzipped folder
-5. Click **Deploy** — site is live in ~30 seconds
-
-### Connecting Your Custom Domain (robas-law.co.il)
-1. In your Pages project → **Custom domains** → **Set up a custom domain**
-2. Enter `robas-law.co.il`
-3. Cloudflare will ask you to update nameservers at your domain registrar
-4. Update nameservers → wait for DNS propagation (minutes to 24hrs)
-5. HTTPS is automatic — Cloudflare provisions SSL for you
-
-> **Important:** The existing site stays untouched until you change the nameservers. Test everything on `robas-law.pages.dev` first.
-
----
-
-## Project Structure
+## How this repo is laid out
 
 ```
-robas-law/
-├── index.html                 # Complete single-page website (Hebrew RTL)
-├── css/
-│   └── style.css              # Full stylesheet (~1,600 lines)
-├── js/
-│   └── main.js                # Interactions & animations
-├── assets/
-│   ├── logo.svg               # Dark logo (for light backgrounds)
-│   ├── logo-white.svg         # White logo with text (hero, footer)
-│   └── logo-mark.svg          # White monogram only (navigation bar)
-├── functions/
-│   └── api/
-│       └── contact.js         # Cloudflare Pages Function (form handler)
-├── _redirects                 # www → non-www, HTTP → HTTPS
-├── _headers                   # Security headers & caching rules
-└── README.md                  # This file
+site-src/                     ← EDIT HERE
+├── data/site.json            phone, fax, email, address, hours, nav tree, client list
+├── partials/                 layout, nav, mobile-menu, contact-band, footer, fab
+└── pages/                    per-page content only (front-matter + body)
+
+build.js                      assembles site-src → robas-law-website (no dependencies)
+
+robas-law-website/            ← BUILD OUTPUT, committed, what Cloudflare serves
+├── *.html                    15 generated pages — do not hand-edit, they get overwritten
+├── css/style.css             the design system (hand-written, edit directly)
+├── js/main.js                site behaviour (hand-written, edit directly)
+├── assets/                   logos (SVG), client logos (PNG), photos
+├── functions/api/contact.js  Cloudflare Pages Function for the contact form
+├── _headers                  security headers + caching
+└── _redirects                301s from every legacy WordPress URL
 ```
 
----
+**The HTML files in `robas-law-website/` are generated.** Editing them directly works
+until the next build, then your change is gone. Edit `site-src/` and rebuild.
 
-## Contact Info (Already Configured)
-
-| Channel   | Value                          | Link Format                              |
-|-----------|--------------------------------|------------------------------------------|
-| Phone     | 09-8623299                     | `tel:+972-9-8623299`                     |
-| Fax       | 09-8612894                     | —                                        |
-| Email     | office@robas-law.co.il         | `mailto:office@robas-law.co.il`          |
-| WhatsApp  | +972-9-8623299                 | `https://wa.me/97298623299`              |
-| Address   | גביש 4, "בית טיטניום", נתניה  | Google Maps embed in contact section     |
-
-All links (phone, WhatsApp, email) are already wired into:
-- Navigation bar (WhatsApp button)
-- Hero section (CTA buttons)
-- Contact section (all four methods + form)
-- CTA banner (phone + WhatsApp)
-- Floating action button / FAB (bottom-left, all three)
-- Footer (all contact details)
-- Mobile menu (phone + WhatsApp)
+`css/style.css` and `js/main.js` are *not* generated — edit those in place.
 
 ---
 
-## Replacing Placeholder Photos
+## Building
 
-The site currently loads placeholder images from Unsplash. To replace with real photos:
+```bash
+node build.js
+```
 
-### Photo Slots
+That's it — no npm install, no dependencies. It prints `Built 15 pages` and fails
+loudly (non-zero exit) if a page has broken front-matter or an unknown `{{token}}`.
 
-| #  | Section        | What to Shoot                          | Recommended Size   | Replace In HTML                          |
-|----|----------------|----------------------------------------|--------------------|------------------------------------------|
-| 1  | Hero BG        | Office exterior, Netanya skyline, or abstract architectural shot | 1600×900+ px  | Search for `unsplash.com/photo-1497366216548` |
-| 2  | About          | Professional portrait of Lior          | 600×800+ px (3:4)  | Search for `unsplash.com/photo-1560250097` |
-| 3  | Why Us         | Office interior or meeting room        | 700×500+ px        | Search for `unsplash.com/photo-1497366754035` |
-| 4  | Practice BG    | Subtle texture (marble, concrete)      | 1600×900+ px       | Search for `unsplash.com/photo-1497366811353` |
-| 5  | CTA Banner     | Wide shot — building, skyline, abstract | 1600×600+ px       | Search for `unsplash.com/photo-1486406146926` |
+The output is committed to the repo, so **Cloudflare needs no build step of its own**
+and `wrangler` keeps working exactly as before. Just remember to run the build before
+you commit.
 
-### Steps
-1. Prepare images — save as `.jpg`, optimize for web (under 200KB each)
-2. Place in the `assets/` folder:
-   ```
-   assets/
-     lior-portrait.jpg
-     office-interior.jpg
-     hero-bg.jpg
-     cta-bg.jpg
-   ```
-3. In `index.html`, find the Unsplash URL and replace:
-   ```html
-   <!-- Change this: -->
-   src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80"
-   <!-- To this: -->
-   src="assets/lior-portrait.jpg"
-   ```
-4. Re-upload to Cloudflare Pages
+### Local preview
 
-> **Tip:** Each photo slot has an HTML comment above it like `<!-- PHOTO SLOT: ... -->` to help you find it.
+```bash
+cd robas-law-website && python3 -m http.server 8899
+```
+
+Then open http://localhost:8899. For the contact form, use
+`npx wrangler pages dev robas-law-website/` instead — plain HTTP has no `/api/contact`.
 
 ---
 
-## Customization Checklist
+## Common edits
 
-- [ ] Replace placeholder photos with real ones
-- [ ] Verify WhatsApp number format works (test the link)
-- [ ] Update Google Maps embed with exact coordinates
-- [ ] Replace placeholder testimonials with real client quotes
-- [ ] Update stats (years of experience, client count, success rate)
-- [ ] Review and adjust practice areas text
-- [ ] Update "About" section bio with real text from Lior
-- [ ] Add Google Analytics or Cloudflare Web Analytics
-- [ ] Submit sitemap to Google Search Console
-- [ ] Test contact form with Mailgun (see below)
+### Phone, email, address, hours, fax
+One place: `site-src/data/site.json`. Rebuild. Every page updates.
 
----
+### Menu links
+`site-src/data/site.json` → the `nav` array. Dropdowns are the nested `children`
+arrays. The mobile menu, desktop nav and active-link highlighting are all generated
+from it, so there is nothing to keep in sync by hand.
 
-## Contact Form Setup
+### Page text
+`site-src/pages/<page>.html`. Each starts with a front-matter block:
 
-The form currently shows a success animation but doesn't send emails yet.  
-To enable real email delivery:
+```html
+<!--@ {
+  "title": "...",              page <title> and og:title
+  "description": "...",        meta description and og:description
+  "nav": "about.html",         which nav link to mark active
+  "transparentNav": true       optional — nav sits over the hero (homepage only)
+} @-->
+```
 
-### Option A: Mailgun (Recommended)
-1. Create a [Mailgun](https://www.mailgun.com) account (free tier: 5,000 emails/month)
-2. In Cloudflare Pages → **Settings** → **Environment variables**, add:
-   - `NOTIFICATION_EMAIL` = `office@robas-law.co.il`
-   - `MAILGUN_API_KEY` = your Mailgun API key
-   - `MAILGUN_DOMAIN` = your Mailgun sending domain
-3. In `js/main.js`, uncomment the `fetch('/api/contact', ...)` block and remove the simulated delay
-4. Re-deploy
+### Colours and type
+CSS custom properties in `:root` at the top of `robas-law-website/css/style.css`.
+The palette is sampled from the office photographs — ink, paper, oak, ochre, slate.
 
-### Option B: Formspree / Getform (Simpler)
-1. Sign up at [Formspree](https://formspree.io) or [Getform](https://getform.io)
-2. Get your form endpoint URL
-3. Update the form's `action` attribute in `index.html`
+### Adding a page
+1. Create `site-src/pages/new-page.html` with a front-matter block.
+2. Add it to `nav` (and/or `footerServices` / `footerOffice`) in `site.json`.
+3. `node build.js`.
 
 ---
 
-## Technical Details
+## Photographs
 
-| Layer         | Technology                                    |
-|---------------|-----------------------------------------------|
-| Markup        | Semantic HTML5, RTL-native                    |
-| Styling       | Custom CSS — variables, grid, flexbox         |
-| Typography    | Google Fonts: Frank Ruhl Libre, Noto Sans Hebrew |
-| Animations    | CSS transitions + IntersectionObserver        |
-| Form Backend  | Cloudflare Pages Functions (serverless)       |
-| Hosting       | Cloudflare Pages (free tier)                  |
-| CDN & SSL     | Cloudflare (automatic)                        |
+Real photographs of the office live in `robas-law-website/assets/photos/`:
 
-### Performance Targets
-- Lighthouse: 95+ across all categories
-- First load: < 2 seconds on 3G
-- Total weight: ~25KB code + images
-- No JavaScript frameworks, no build tools
+| File | Used by |
+|------|---------|
+| `office-reception.jpg` | homepage hero (slide 1) and the mid-page photo band |
+| `office-entrance.jpg`  | homepage hero (slide 2) |
 
-### Browser Support
-- Chrome, Firefox, Safari, Edge (latest 2 versions)
-- iOS Safari, Android Chrome
-- RTL layout fully supported
+If a file is missing, `js/main.js` removes the broken image and the hero degrades to a
+plain ink panel — no broken-image icon — but the site is much better with them there.
+
+**There are deliberately no photographs of the lawyers.** The team is presented as a
+typographic roster. Do not add stock portraits.
 
 ---
 
-## File Sizes
+## Client logos
 
-| File               | Size (raw) | Size (gzipped) |
-|--------------------|------------|----------------|
-| index.html         | ~18 KB     | ~5 KB          |
-| style.css          | ~38 KB     | ~7 KB          |
-| main.js            | ~5 KB      | ~2 KB          |
-| Logo SVGs (×3)     | ~3 KB      | ~1 KB          |
-| **Total code**     | **~64 KB** | **~15 KB**     |
+`assets/clients/*.png`, listed in `site.json` under `clients`. They were recovered from
+the sprite strips on the old WordPress site, so they are only ~140px tall — good enough
+at the size they render, but if better files turn up, drop them in with the same
+filenames. They render monochrome and return to full colour on hover.
 
 ---
 
-## Google Maps Embed
+## Deployment
 
-The current map embed uses a generic Netanya coordinate. To get the exact one:
+Cloudflare Pages, asset directory `robas-law-website/`.
 
-1. Go to [Google Maps](https://maps.google.com)
-2. Search for "גביש 4, נתניה" or "בית טיטניום נתניה"
-3. Click **Share** → **Embed a map** → Copy the `<iframe>` code
-4. Replace the existing `<iframe>` in the contact section of `index.html`
+```bash
+node build.js
+npx wrangler pages deploy robas-law-website/
+```
 
----
+`_headers` caches `/css/*`, `/js/*` and `/assets/*` as immutable for a year, so
+`build.js` appends a content hash to the stylesheet and script URLs
+(`style.css?v=0c240db0`). Change the file, the URL changes, visitors get the new one.
 
-## SEO Notes
-
-Already included:
-- Hebrew `<title>` and `<meta description>`
-- Open Graph tags for social sharing
-- Structured data (JSON-LD) for LocalBusiness schema
-- Semantic HTML headings hierarchy
-- Image `alt` tags in Hebrew
-- `_headers` file with security headers
-
-Still needed after launch:
-- Submit `robas-law.co.il` to [Google Search Console](https://search.google.com/search-console)
-- Create and submit a `sitemap.xml`
-- Set up [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) (free, privacy-friendly)
-- Claim/update [Google Business Profile](https://business.google.com) with the new website URL
+`_redirects` maps every URL the old WordPress site published — including the eight
+ייפוי־כוח־מתמשך pages, which are now four — so nothing that is currently indexed 404s.
 
 ---
 
-## License
+## Note on the current live site
 
-This website was built for Lior Robas Law Firm & Notary. All rights reserved.  
-Placeholder images from [Unsplash](https://unsplash.com) (free commercial license).
+`robas-law.co.il` is still the old WordPress install, and as of September 2026 it is
+serving injected SEO spam (casino paragraphs with outbound links) inside its homepage
+content. That is a compromise of the WordPress site, not of this project. Worth telling
+Lior regardless — and a reason not to copy content from it wholesale.

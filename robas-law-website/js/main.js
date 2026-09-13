@@ -1,122 +1,274 @@
-/* ============================================
-   ROBAS LAW — Main JavaScript (Multi-page)
-   ============================================ */
+/* ============================================================
+   ROBAS LAW — site behaviour
+   ============================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+(function () {
+    'use strict';
 
-    // ===== NAVIGATION SCROLL EFFECT =====
-    const nav = document.getElementById('nav');
-    if (nav) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 60) {
-                nav.classList.add('nav--scrolled');
-            } else {
-                nav.classList.remove('nav--scrolled');
-            }
-        }, { passive: true });
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        if (nav.classList.contains('nav--dark')) {
-            nav.classList.add('nav--scrolled');
-        }
+    /* ---------- nav: solid background once scrolled ---------- */
+
+    var nav = document.getElementById('nav');
+
+    if (nav && nav.classList.contains('nav--over-hero')) {
+        var syncNav = function () {
+            nav.classList.toggle('is-scrolled', window.scrollY > 40);
+        };
+
+        syncNav();
+        window.addEventListener('scroll', syncNav, { passive: true });
     }
 
-    // ===== MOBILE MENU =====
-    const burger = document.getElementById('navBurger');
-    const mobileMenu = document.getElementById('mobileMenu');
+    /* ---------- mobile menu ---------- */
+
+    var burger = document.getElementById('navBurger');
+    var mobileMenu = document.getElementById('mobileMenu');
 
     if (burger && mobileMenu) {
-        burger.addEventListener('click', () => {
-            burger.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            var isActive = mobileMenu.classList.contains('active');
-            mobileMenu.style.opacity = isActive ? '1' : '0';
-            mobileMenu.style.visibility = isActive ? 'visible' : 'hidden';
-            document.body.style.overflow = isActive ? 'hidden' : '';
+        var setMenu = function (open) {
+            burger.classList.toggle('is-open', open);
+            burger.setAttribute('aria-expanded', String(open));
+            burger.setAttribute('aria-label', open ? 'סגירת תפריט' : 'פתיחת תפריט');
+            document.body.style.overflow = open ? 'hidden' : '';
+
+            if (open) {
+                mobileMenu.hidden = false;
+                // next frame, so the opacity transition has a starting value to animate from
+                requestAnimationFrame(function () { mobileMenu.classList.add('is-open'); });
+            } else {
+                mobileMenu.classList.remove('is-open');
+                window.setTimeout(function () {
+                    if (mobileMenu.classList.contains('is-open') === false) {
+                        mobileMenu.hidden = true;
+                    }
+                }, reduced ? 0 : 350);
+            }
+        };
+
+        burger.addEventListener('click', function () {
+            setMenu(mobileMenu.hidden === true);
         });
 
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                burger.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                mobileMenu.style.opacity = '0';
-                mobileMenu.style.visibility = 'hidden';
-                document.body.style.overflow = '';
-            });
+        mobileMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () { setMenu(false); });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && mobileMenu.hidden === false) {
+                setMenu(false);
+                burger.focus();
+            }
         });
     }
 
-    // ===== SMOOTH SCROLL FOR ANCHOR LINKS =====
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', (e) => {
-            const href = anchor.getAttribute('href');
-            if (href === '#') return;
+    /* ---------- desktop dropdowns: keyboard + touch ---------- */
 
-            const target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                const offset = nav ? nav.offsetHeight : 0;
-                const top = target.getBoundingClientRect().top + window.scrollY - offset - 20;
-                window.scrollTo({ top, behavior: 'smooth' });
+    document.querySelectorAll('.nav__item--has-menu').forEach(function (item) {
+        var trigger = item.querySelector('.nav__link--menu');
+
+        if (trigger === null) return;
+
+        trigger.addEventListener('click', function (e) {
+            e.preventDefault();
+            var open = item.classList.toggle('is-open');
+            trigger.setAttribute('aria-expanded', String(open));
+        });
+
+        item.addEventListener('focusout', function () {
+            window.setTimeout(function () {
+                if (item.contains(document.activeElement) === false) {
+                    item.classList.remove('is-open');
+                    trigger.setAttribute('aria-expanded', 'false');
+                }
+            }, 0);
+        });
+    });
+
+    document.addEventListener('click', function (e) {
+        document.querySelectorAll('.nav__item--has-menu.is-open').forEach(function (item) {
+            if (item.contains(e.target) === false) {
+                item.classList.remove('is-open');
+                var t = item.querySelector('.nav__link--menu');
+                if (t !== null) t.setAttribute('aria-expanded', 'false');
             }
         });
     });
 
-    // ===== INTERSECTION OBSERVER — REVEAL ANIMATIONS =====
-    const revealElements = document.querySelectorAll('.reveal, .reveal-slide');
-    if (revealElements.length > 0) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
+    /* ---------- photography: never leave a broken image on the page ----------
+       The hero and the photo bands sit on ink, so a missing file degrades to a
+       plain dark panel rather than a broken-image icon. */
+
+    document.querySelectorAll('.hero__slide img, .band-photo__img').forEach(function (img) {
+        var drop = function () {
+            var slide = img.closest('.hero__slide');
+            if (slide !== null) slide.remove();
+            else img.remove();
+        };
+
+        if (img.complete === true && img.naturalWidth === 0) drop();
+        img.addEventListener('error', drop);
+    });
+
+    /* ---------- hero: slow crossfade between office photographs ---------- */
+
+    var heroMedia = document.querySelector('.hero__media');
+
+    if (heroMedia !== null) {
+        var slides = Array.prototype.slice.call(heroMedia.querySelectorAll('.hero__slide'));
+        var dots = Array.prototype.slice.call(document.querySelectorAll('.hero__dot'));
+        var dotsWrap = document.querySelector('.hero__dots');
+
+        // nothing to page through — hide the pagination rather than show dead controls
+        if (slides.length < 2 && dotsWrap !== null) dotsWrap.hidden = true;
+        if (slides.length > 0) slides[0].classList.add('is-active');
+
+        if (slides.length > 1 && reduced === false) {
+            var current = 0;
+
+            var show = function (next) {
+                slides[current].classList.remove('is-active');
+                slides[next].classList.add('is-active');
+
+                if (dots.length === slides.length) {
+                    dots[current].classList.remove('is-active');
+                    dots[next].classList.add('is-active');
+                }
+
+                current = next;
+            };
+
+            var timer = window.setInterval(function () {
+                if (document.hidden === false) {
+                    show((current + 1) % slides.length);
+                }
+            }, 7000);
+
+            dots.forEach(function (dot, i) {
+                dot.addEventListener('click', function () {
+                    window.clearInterval(timer);
+                    show(i);
+                });
+            });
+        }
+    }
+
+    /* ---------- full-bleed photo bands: parallax ---------- */
+
+    var bands = Array.prototype.slice.call(document.querySelectorAll('.band-photo__img'));
+
+    if (bands.length > 0 && reduced === false) {
+        var ticking = false;
+
+        var positionBands = function () {
+            bands.forEach(function (img) {
+                // the image may have been pulled from the DOM by the error handler above
+                if (img.isConnected === false || img.parentElement === null) return;
+
+                var rect = img.parentElement.getBoundingClientRect();
+
+                if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+
+                // -1 (band entering from below) … 1 (band leaving above)
+                var progress = (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight;
+                img.style.transform = 'translate3d(0, ' + (progress * 7).toFixed(2) + '%, 0)';
+            });
+
+            ticking = false;
+        };
+
+        var onScroll = function () {
+            if (ticking === false) {
+                ticking = true;
+                requestAnimationFrame(positionBands);
+            }
+        };
+
+        positionBands();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+    }
+
+    /* ---------- one entrance animation, once ---------- */
+
+    var risers = document.querySelectorAll('.reveal, .reveal-slide, .u-rise');
+
+    if (reduced === true || 'IntersectionObserver' in window === false) {
+        risers.forEach(function (el) { el.classList.add('visible'); });
+    } else {
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting === true) {
                     entry.target.classList.add('visible');
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
 
-        revealElements.forEach(el => observer.observe(el));
+        risers.forEach(function (el) { observer.observe(el); });
     }
 
-    // ===== ACTIVE NAV LINK =====
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.nav__link, .nav__dropdown-menu a').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === currentPage) {
-            link.classList.add('nav__link--active');
-        }
-    });
+    /* ---------- floating contact buttons ---------- */
 
-    // ===== CONTACT FORM =====
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', async (e) => {
+    var fab = document.getElementById('fab');
+
+    if (fab !== null) {
+        var syncFab = function () {
+            fab.classList.toggle('is-visible', window.scrollY > 420);
+        };
+
+        syncFab();
+        window.addEventListener('scroll', syncFab, { passive: true });
+    }
+
+    /* ---------- contact form ---------- */
+
+    var form = document.getElementById('contactForm');
+
+    if (form !== null) {
+        var status = document.getElementById('formStatus');
+        var submit = form.querySelector('[type="submit"]');
+
+        var say = function (message, ok) {
+            if (status === null) return;
+            status.textContent = message;
+            status.className = 'form-status ' + (ok ? 'form-status--ok' : 'form-status--err');
+        };
+
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
-            const btn = contactForm.querySelector('button[type="submit"]');
-            const originalText = btn.textContent;
-            btn.textContent = 'שולח...';
-            btn.disabled = true;
 
-            try {
-                const formData = new FormData(contactForm);
-                const data = Object.fromEntries(formData);
+            var original = submit ? submit.textContent : '';
 
-                const response = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
-
-                if (response.ok) {
-                    contactForm.style.display = 'none';
-                    const success = document.getElementById('formSuccess');
-                    if (success) success.style.setProperty('display', 'block', 'important');
-                } else {
-                    throw new Error('Server error');
-                }
-            } catch (err) {
-                btn.textContent = originalText;
-                btn.disabled = false;
-                alert('שגיאה בשליחת הטופס. אנא נסו שוב או צרו קשר בטלפון.');
+            if (submit !== null) {
+                submit.disabled = true;
+                submit.textContent = 'שולח…';
             }
+
+            say('', true);
+
+            fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(new FormData(form)))
+            })
+                .then(function (res) {
+                    if (res.ok === false) throw new Error('bad status ' + res.status);
+                    return res.json().catch(function () { return {}; });
+                })
+                .then(function () {
+                    form.reset();
+                    say('תודה! ההודעה נשלחה. נחזור אליכם בהקדם.', true);
+                })
+                .catch(function () {
+                    say('אירעה תקלה בשליחה. אפשר להתקשר אלינו ל-09-8612894 או לכתוב ל-office@robas-law.co.il', false);
+                })
+                .finally(function () {
+                    if (submit !== null) {
+                        submit.disabled = false;
+                        submit.textContent = original;
+                    }
+                });
         });
     }
-});
+})();

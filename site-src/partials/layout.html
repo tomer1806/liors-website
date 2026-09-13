@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta name="theme-color" content="#161719">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v={{CSS_V}}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LegalService",
+  "name": "ליאור רובס — משרד עורכי דין ונוטריון",
+  "url": "https://robas-law.co.il",
+  "telephone": "+972-9-8612894",
+  "faxNumber": "+972-73-2758870",
+  "email": "office@robas-law.co.il",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "הגביש 4, בית טיטניום, קומה א׳",
+    "addressLocality": "נתניה",
+    "addressCountry": "IL"
+  },
+  "openingHoursSpecification": [{
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+    "opens": "09:00",
+    "closes": "18:00"
+  }],
+  "sameAs": ["https://www.facebook.com/1432093250415826"]
+}
+</script>
+</head>
+<body class="{{BODY_CLASS}}">
+
+<a class="skip-link" href="#main">דלג לתוכן</a>
+
+{{> nav}}
+{{> mobile-menu}}
+
+<main id="main">
+{{BODY}}
+</main>
+
+{{> contact-band}}
+{{> footer}}
+{{> fab}}
+
+<script src="js/main.js?v={{JS_V}}" defer></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__grid">
+            <div class="footer__brand">
+                <img src="assets/logo-white.svg" alt="{{name}}" class="footer__logo" width="150" height="72">
+                <p class="footer__about">המשרד מטפל במנעד רחב מאוד של לקוחות — מרוכשים ומוכרים של דירות, דרך יזמים וחברות פרטיות או ציבוריות, ועד לגופים מוסדיים.</p>
+                <a href="{{facebook}}" target="_blank" rel="noopener" class="footer__social" aria-label="פייסבוק">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+            </div>
+
+            <div class="footer__col">
+                <h2 class="footer__title">שירותים</h2>
+                    {{FOOTER_SERVICES}}
+            </div>
+
+            <div class="footer__col">
+                <h2 class="footer__title">המשרד</h2>
+                    {{FOOTER_OFFICE}}
+            </div>
+
+            <div class="footer__col">
+                <h2 class="footer__title">צרו קשר</h2>
+                <a class="footer__link" href="{{phoneHref}}">{{phone}}</a>
+                <a class="footer__link" href="mailto:{{email}}">{{email}}</a>
+                <span class="footer__line">{{address}}</span>
+                <span class="footer__line">פקס: {{fax}}</span>
+                <span class="footer__line">{{hours}}</span>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <span>© {{copyrightFrom}}–{{YEAR}} {{name}} — {{tagline}}. כל הזכויות שמורות.</span>
+            <a href="privacy.html">הצהרת פרטיות</a>
+        </div>
+    </div>
+</footer>
