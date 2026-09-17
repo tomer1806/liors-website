@@ -208,20 +208,56 @@ function downloadGroups() {
     }).join('\n            ');
 }
 
-/* The logo wall shows only the clients whose mark we actually hold. A slug with no
-   PNG behind it is a build failure, not a broken image in production. */
-const clientLogos = () => site.clients
-    .filter((c) => {
-        if (c.slug === undefined) return false;
+/* Intrinsic size of a logo, so the <img> can declare the real aspect ratio instead of
+   a single hardcoded 220x70 that was wrong for every one of them and shifted the grid
+   as the images arrived. No dependencies: PNG keeps width/height in the IHDR chunk at a
+   fixed offset, and an SVG carries them in its viewBox. */
+function logoSize(file) {
+    const buf = fs.readFileSync(file);
 
-        if (fs.existsSync(path.join(OUT, 'assets', 'clients', `${c.slug}.png`)) === false) {
-            problems.push(`site.json client "${c.name}" has slug "${c.slug}" but assets/clients/${c.slug}.png is missing`);
-            return false;
+    if (file.endsWith('.png')) {
+        return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
+    }
+
+    const svg = buf.toString('utf8', 0, 2000);
+    const viewBox = svg.match(/viewBox="\s*[-\d.]+[,\s]+[-\d.]+[,\s]+([\d.]+)[,\s]+([\d.]+)/);
+
+    if (viewBox) return { w: Math.round(+viewBox[1]), h: Math.round(+viewBox[2]) };
+
+    const w = svg.match(/\swidth="(\d+)/);
+    const h = svg.match(/\sheight="(\d+)/);
+
+    return w && h ? { w: +w[1], h: +h[1] } : null;
+}
+
+/* The logo wall shows only the clients whose mark we actually hold. A slug with no file
+   behind it is a build failure, not a broken image in production. SVG is preferred where
+   the company publishes one — it stays sharp and the CSS treats it identically. */
+const LOGO_DIR = path.join(OUT, 'assets', 'clients');
+
+const clientLogos = () => site.clients
+    .map((c) => {
+        if (c.slug === undefined) return '';
+
+        const file = ['svg', 'png']
+            .map((ext) => `${c.slug}.${ext}`)
+            .find((f) => fs.existsSync(path.join(LOGO_DIR, f)));
+
+        if (file === undefined) {
+            problems.push(`site.json client "${c.name}" has slug "${c.slug}" but neither assets/clients/${c.slug}.svg nor .png exists`);
+            return '';
         }
 
-        return true;
+        const size = logoSize(path.join(LOGO_DIR, file));
+
+        if (size === null) {
+            problems.push(`assets/clients/${file} has no readable dimensions`);
+            return '';
+        }
+
+        return `<div class="clients__cell"><img src="assets/clients/${file}" alt="${esc(c.name)}" class="clients__logo" loading="lazy" width="${size.w}" height="${size.h}"></div>`;
     })
-    .map((c) => `<div class="clients__cell"><img src="assets/clients/${c.slug}.png" alt="${esc(c.name)}" class="clients__logo" loading="lazy" width="220" height="70"></div>`)
+    .filter((row) => row !== '')
     .join('\n                ');
 
 /* The roll-call on clients.html: every client, logo or not. Generated from the same

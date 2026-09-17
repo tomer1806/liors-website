@@ -131,6 +131,17 @@ drifted from the logo list: the same client appeared as `אופק מערכות` 
 `אופק מחשבים` in the other, and as `אובזוטק אקוסטיקה` / `אוזבטק חיפויים וגימורים`.
 Do not reintroduce a second list. `build.js` fails if a `slug` has no matching PNG.
 
+Six logos were sourced from the clients' own websites in September 2026; their source
+URLs, company numbers and confidence levels are recorded in `photo-credits.json` under
+`clientLogos`. **These are third-party trademarks** — the basis for showing them is the
+firm's client relationship, so confirm with the client before adding another. Two watch-outs
+that cost real time: several companies serve a **white-knockout** logo in their own dark
+header (invisible on the white cell — take the dark variant), and Israeli company names are
+often written loosely, so match on ח.פ before trusting a name.
+
+Logos may be `.svg` or `.png`; `build.js` prefers SVG, reads each file's real intrinsic
+size and emits it on the `<img>`, so the grid does not shift as images load.
+
 The two grids draw their hairlines **per cell** (`box-shadow: 0 0 0 1px var(--line)`)
 rather than by letting a `--line` background show through 1px gaps. The list changes
 often and rarely divides evenly into 4 or 3 columns; the old approach rendered the
