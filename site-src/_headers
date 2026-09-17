@@ -1,0 +1,36 @@
+# ⚠️ SOURCE FILE — robas-law-website/_headers is generated from this by `node build.js`.
+# Edit here, not there.
+#
+# The placeholder in script-src is replaced at build time with a SHA-256 for every
+# inline <script> block the build actually emitted (today: just the schema.org JSON-LD
+# in layout.html, which is byte-identical on all 16 pages). Hand-maintaining that hash
+# would mean a one-character edit to site.json silently breaking the policy and
+# blocking the structured data, so the build derives it from the output instead.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' {{CSP_SCRIPT_HASHES}}; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; frame-src https://www.google.com; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), xr-spatial-tracking=()
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Official forms can be reissued by the Ministry of Justice under the same
+# filename, so these are cached for a day rather than a year.
+/assets/poa/*
+  Cache-Control: public, max-age=86400, must-revalidate
+
+# The contact endpoint must never be cached: a cached 200 would tell the next
+# visitor their enquiry was sent when it was not.
+/api/*
+  Cache-Control: no-store

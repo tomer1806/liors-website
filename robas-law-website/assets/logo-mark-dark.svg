@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 6 212 212" fill="none">
+  <!-- Favicon / light-background monogram.
+       Tighter viewBox than logo-mark.svg (no wordmark space, minimal padding) and
+       heavier strokes, because at 16-32px the brand's true hairline weights vanish. -->
+  <rect x="24" y="16" width="192" height="192" stroke="#161719" stroke-width="10" fill="none"/>
+  <path d="M 72 52 L 72 172 L 140 172"
+        stroke="#161719" stroke-width="14" stroke-linecap="butt" stroke-linejoin="miter" fill="none"/>
+  <path d="M 120 52 L 120 172"
+        stroke="#161719" stroke-width="14" stroke-linecap="butt" fill="none"/>
+  <path d="M 120 52 C 120 52, 178 52, 178 100 C 178 140, 140 142, 120 142"
+        stroke="#161719" stroke-width="14" stroke-linecap="butt" fill="none"/>
+  <path d="M 138 132 L 176 172"
+        stroke="#161719" stroke-width="14" stroke-linecap="butt" fill="none"/>
+</svg>
