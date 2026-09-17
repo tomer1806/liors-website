@@ -15,6 +15,11 @@
   "whatsappDisplay": "052-975-7798",
   "whatsappText": "שלום, פונה אליכם מהאתר",
   "fax": "09-8623299",
+
+  "_intlNote": "schema.org prefers E.164-style numbers, so the JSON-LD in layout.html uses these. They must stay in step with `phone` and `fax` above — same numbers, international form.",
+  "phoneIntl": "+972-9-8612894",
+  "faxIntl": "+972-9-8623299",
+
   "email": "office@robas-law.co.il",
   "address": "שד׳ טום לנטוס 8, בית אופל, קומה חמישית, נתניה",
   "addressShort": "שד׳ טום לנטוס 8, בית אופל, נתניה",
@@ -68,18 +73,29 @@
     { "label": "הצהרת פרטיות", "href": "privacy.html" }
   ],
 
+  "_clientsNote": "Single source for BOTH client lists: the logo wall (`clients__grid`, on index.html and clients.html) and the full roll-call on clients.html. Before Sept 2026 the roll-call was hardcoded in clients.html and had already drifted from this array — the same client appeared as `אופק מערכות` in one and `אופק מחשבים` in the other, and as `אובזוטק אקוסטיקה` / `אוזבטק חיפויים וגימורים`. A client with a `slug` has a logo at assets/clients/<slug>.png and appears in both; one without a slug appears only in the roll-call. build.js fails if a slug has no matching PNG.",
+
   "clients": [
     { "slug": "hapoalim",       "name": "בנק הפועלים בע״מ" },
     { "slug": "beinleumi",      "name": "בנק הבינלאומי הראשון לישראל בע״מ" },
     { "slug": "pagi",           "name": "בנק פועלי אגודת ישראל" },
-    { "slug": "shirbit",        "name": "שירביט חברה לביטוח בע״מ" },
     { "slug": "manpower",       "name": "קבוצת מנפאואר ישראל" },
-    { "slug": "kaymera",        "name": "קאימרה טכנולוגיות בע״מ" },
     { "slug": "hinuma-motors",  "name": "הינומה מוטורס" },
-    { "slug": "ofek-maarachot", "name": "אופק מערכות" },
     { "slug": "obzotek",        "name": "אובזוטק אקוסטיקה" },
-    { "slug": "shivuk-hamea",   "name": "שיווק המאה בע״מ" },
-    { "slug": "miss-nrg",       "name": "MISS N.R.G" },
-    { "slug": "ci-research",    "name": "מידע שיווקי סי.איי. בע״מ" }
+    { "slug": "shivuk-hamea",   "name": "שיווק המאה (מסחר) 2002 בע״מ" },
+
+    { "name": "אנג׳ל מותגי אופנה בע״מ" },
+    { "name": "אחים תוינה בע״מ" },
+    { "name": "רגב חברה חקלאית בע״מ" },
+    { "name": "צמד אביזרי אלומיניום בע״מ" },
+    { "name": "מ.ד. מערכות אלומיניום בע״מ" },
+    { "name": "גזפרו בע״מ" },
+    { "name": "א. ש. מיטב פיננסים בע״מ" },
+    { "name": "VBS אחזקות בע״מ" },
+    { "name": "יניב ג. הנדסה ובנייה בע״מ" },
+    { "name": "חכמון-גבאי בע״מ" },
+    { "name": "א. א. מחשבים בע״מ" },
+    { "name": "אגימר ליס מימון בע״מ" },
+    { "name": "מ.ל.ב זכויות עובדים בע״מ" }
   ]
 }

@@ -72,6 +72,22 @@ function versionAssets(html) {
     });
 }
 
+/* Every inline <script> in the output needs a CSP hash, or the Content-Security-Policy
+   in site-src/_headers will block it. Collecting them from the built HTML — rather than
+   writing the hash by hand — means the policy cannot drift out of step with the pages:
+   change the JSON-LD in layout.html, or the address it interpolates, and the next build
+   simply emits the new hash. Blocks carrying src= are fetched files, covered by 'self'. */
+const INLINE_SCRIPT = /<script(?![^>]*\ssrc=)[^>]*>([\s\S]*?)<\/script>/g;
+const inlineScriptHashes = new Set();
+
+function collectScriptHashes(html) {
+    for (const m of html.matchAll(INLINE_SCRIPT)) {
+        inlineScriptHashes.add(
+            "'sha256-" + crypto.createHash('sha256').update(m[1], 'utf8').digest('base64') + "'"
+        );
+    }
+}
+
 /* Pull the {"..."} front-matter comment off the top of a page file. */
 function frontMatter(src, file) {
     const m = src.match(/^<!--@([\s\S]*?)@-->\s*/);
@@ -192,9 +208,27 @@ function downloadGroups() {
     }).join('\n            ');
 }
 
+/* The logo wall shows only the clients whose mark we actually hold. A slug with no
+   PNG behind it is a build failure, not a broken image in production. */
 const clientLogos = () => site.clients
+    .filter((c) => {
+        if (c.slug === undefined) return false;
+
+        if (fs.existsSync(path.join(OUT, 'assets', 'clients', `${c.slug}.png`)) === false) {
+            problems.push(`site.json client "${c.name}" has slug "${c.slug}" but assets/clients/${c.slug}.png is missing`);
+            return false;
+        }
+
+        return true;
+    })
     .map((c) => `<div class="clients__cell"><img src="assets/clients/${c.slug}.png" alt="${esc(c.name)}" class="clients__logo" loading="lazy" width="220" height="70"></div>`)
     .join('\n                ');
+
+/* The roll-call on clients.html: every client, logo or not. Generated from the same
+   array as the logo wall so the two can never disagree about a name again. */
+const clientList = () => site.clients
+    .map((c) => `<div class="client-logo">${esc(c.name)}</div>`)
+    .join('\n            ');
 
 /* ---------- render ---------- */
 
@@ -230,6 +264,14 @@ const jsV = assetVersion('js/main.js');
 let built = 0;
 const problems = [];
 
+/* These five depend only on the data files, not on the page being rendered. Building
+   them once keeps a single missing asset from being reported sixteen times over. */
+const clientLogosHtml = clientLogos();
+const clientListHtml = clientList();
+const poaDownloadsHtml = downloadGroups();
+const notableCasesHtml = notableCases();
+const featuredCasesHtml = featuredCases();
+
 for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort()) {
     let meta, body;
     try {
@@ -257,10 +299,11 @@ for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort
         MOBILE_LINKS:     mobileLinks(active),
         FOOTER_SERVICES:  linkList(site.footerServices, active),
         FOOTER_OFFICE:    linkList(site.footerOffice, active),
-        CLIENT_LOGOS:     clientLogos(),
-        POA_DOWNLOADS:    downloadGroups(),
-        NOTABLE_CASES:    notableCases(),
-        FEATURED_CASES:   featuredCases(),
+        CLIENT_LOGOS:     clientLogosHtml,
+        CLIENT_LIST:      clientListHtml,
+        POA_DOWNLOADS:    poaDownloadsHtml,
+        NOTABLE_CASES:    notableCasesHtml,
+        FEATURED_CASES:   featuredCasesHtml,
         CASE_COUNT:       String(caseData.cases.length),
         NAV_MODIFIER:     meta.transparentNav ? ' nav--over-hero' : '',
         BODY_CLASS:       meta.bodyClass || '',
@@ -285,6 +328,7 @@ for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort
         continue;
     }
 
+    collectScriptHashes(html);
     fs.writeFileSync(path.join(OUT, file), html);
     built++;
 }
@@ -295,4 +339,11 @@ if (problems.length) {
     process.exit(1);
 }
 
+/* _headers is generated last, so its script-src reflects the pages just written. */
+const headerHashes = [...inlineScriptHashes].sort().join(' ');
+const headers = substitute(read(SRC, '_headers'), { CSP_SCRIPT_HASHES: headerHashes });
+
+fs.writeFileSync(path.join(OUT, '_headers'), headers);
+
 console.log(`Built ${built} pages → ${path.relative(ROOT, OUT)}/`);
+console.log(`Wrote _headers (CSP covers ${inlineScriptHashes.size} inline script block(s))`);

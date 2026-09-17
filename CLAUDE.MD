@@ -12,7 +12,7 @@ Website for **Lior Robas Law Firm & Notary** (משרד עורכי דין ונו�
   - Every form of the address lives in `site.json` (`address`, `addressShort`, `addressStreet`,
     `addressCity`, `mapQuery`). The footer, hero, contact band, contact page, schema.org
     JSON-LD and the Google Maps embed are all generated from those. Never hardcode it again.
-- Phone: 09-8612894 | Fax: 073-2758870 | Email: office@robas-law.co.il
+- Phone: 09-8612894 | Fax: 09-8623299 | Email: office@robas-law.co.il
 - WhatsApp: **052-975-7798** — a separate mobile line, NOT the office landline (`wa.me/972529757798`)
 - Hours: Sun–Thu, 9:00–18:00
 - Facebook: facebook.com/1432093250415826
@@ -23,12 +23,13 @@ Never hand-edit `robas-law-website/*.html` — `node build.js` overwrites them.
 
 | To change | Edit | Then |
 |-----------|------|------|
-| Contact details, nav menu, client list | `site-src/data/site.json` | `node build.js` |
+| Contact details, nav menu, clients | `site-src/data/site.json` | `node build.js` |
 | Notable cases (תיקים בולטים) | `site-src/data/cases.json` | `node build.js` |
 | Nav / footer / mobile menu / FAB markup | `site-src/partials/*.html` | `node build.js` |
 | A page's content | `site-src/pages/<page>.html` | `node build.js` |
 | Styling | `robas-law-website/css/style.css` | edit in place, then `node build.js` to refresh the cache-busting hash |
 | Behaviour | `robas-law-website/js/main.js` | same as above |
+| Security headers / CSP | `site-src/_headers` | `node build.js` |
 
 `build.js` has no dependencies and exits non-zero on a bad front-matter block or an
 unknown `{{token}}`. Always run it before considering a change finished.
@@ -116,6 +117,24 @@ vocabulary for anything you write.
 
 The old WordPress site had **eight** ייפוי־כוח־מתמשך pages; they are consolidated into
 four here, with 301s from all eight in `_redirects`.
+
+## Clients
+
+Both client lists come from the single `clients` array in `site.json`:
+
+- the **logo wall** (`.clients__grid`, on `index.html` and `clients.html`) shows only
+  entries that have a `slug`, meaning `assets/clients/<slug>.png` exists;
+- the **full roll-call** on `clients.html` shows every entry, logo or not.
+
+Until September 2026 the roll-call was hardcoded in `clients.html` and had already
+drifted from the logo list: the same client appeared as `אופק מערכות` in one and
+`אופק מחשבים` in the other, and as `אובזוטק אקוסטיקה` / `אוזבטק חיפויים וגימורים`.
+Do not reintroduce a second list. `build.js` fails if a `slug` has no matching PNG.
+
+The two grids draw their hairlines **per cell** (`box-shadow: 0 0 0 1px var(--line)`)
+rather than by letting a `--line` background show through 1px gaps. The list changes
+often and rarely divides evenly into 4 or 3 columns; the old approach rendered the
+leftover area of the last row as a solid grey block.
 
 ## Notable cases (תיקים בולטים)
 
@@ -207,10 +226,71 @@ for it. Worth knowing before building any SEO around the bare name.
 
 ## Caching
 
-`_headers` marks `/css/*`, `/js/*` and `/assets/*` immutable for a year. `build.js`
+`robas-law-website/_headers` is **generated** from `site-src/_headers` — edit the source,
+not the output. It marks `/css/*`, `/js/*` and `/assets/*` immutable for a year. `build.js`
 therefore appends a content hash to the stylesheet and script URLs. **Do not remove the
 `?v={{CSS_V}}` / `?v={{JS_V}}` query strings from `layout.html`** — without them a CSS
 change would not reach anyone who has visited before.
+
+## Security
+
+Audited September 2026. The attack surface is small — a static brochure site with one
+POST endpoint — so the work was mostly about closing the gaps that surface leaves open.
+
+### Response headers (`site-src/_headers` → generated)
+
+`Content-Security-Policy` is the substantive one. It is an allow-list of exactly what the
+site loads, which means **adding a third-party script, font, analytics tag, embed or CDN
+will silently break it until you add that origin to the policy.** Check the browser
+console after any such change.
+
+| Directive | Why |
+|-----------|-----|
+| `script-src 'self' 'sha256-…'` | No `'unsafe-inline'`. The hash covers the schema.org JSON-LD, and `build.js` recomputes it from the built pages on every build — change `site.json` and the policy follows. Never paste that hash in by hand. |
+| `style-src 'self' fonts.googleapis.com` | Also no `'unsafe-inline'`, which is why there are **zero inline `style=` attributes** in `site-src/`. Use a class. (`element.style.x = …` from JS is unaffected — CSP does not police the CSSOM, so the parallax still works.) |
+| `img-src 'self'` | Every photo is served from this repo. Hotlinking was already banned on licensing grounds; now it fails loudly too. |
+| `frame-src https://www.google.com` | The one Maps embed on `contact.html`. |
+| `frame-ancestors 'none'` + `X-Frame-Options: DENY` | Nobody frames the firm's site into theirs. |
+| `base-uri 'none'`, `object-src 'none'`, `form-action 'self'` | Cheap, and they close the usual escape hatches. |
+
+Also set: `Strict-Transport-Security`, `Cross-Origin-Opener-Policy`, `X-Content-Type-Options`,
+`Referrer-Policy`, and a `Permissions-Policy` that switches off every sensor API.
+
+The Maps iframe deliberately carries **no `referrerpolicy` attribute**. It used to say
+`no-referrer-when-downgrade`, which *overrode* the document policy and widened it from
+origin-only to full-URL. Leaving the attribute off lets `Referrer-Policy` apply.
+
+### `functions/api/contact.js`
+
+The only code that runs on request, and the only thing worth attacking: it spends money
+(a mail-provider send) and lands in a human inbox. Controls, in order: same-origin check,
+body-size cap before parsing, honeypot, per-IP rate limit, per-field length caps,
+control-character stripping, and a strict Reply-To allow-list.
+
+Two of those deserve a note:
+
+- **Reply-To is validated, not just trimmed.** The visitor's address becomes a mail
+  header. A comma or a CRLF in it is how you turn one recipient into several, or inject
+  a header. An address that fails validation does not lose the enquiry — it is delivered
+  without a Reply-To, with a line in the body saying so.
+- **The rate limit is best-effort.** It lives in the Worker isolate, and isolates are
+  per-colo and short-lived, so a distributed flood will not all land on the same counter.
+  It stops one script from one address, for free, with nothing to configure. For a hard
+  limit, add a **Cloudflare WAF rate-limiting rule on `/api/contact`** in the dashboard.
+
+### Still on the firm's side (cannot be done from this repo)
+
+1. **Set the mail provider env vars.** `NOTIFICATION_EMAIL` plus either
+   `MAILGUN_API_KEY` + `MAILGUN_DOMAIN` or `RESEND_API_KEY` + `RESEND_FROM`. Until then
+   the endpoint correctly returns 503 and the page offers WhatsApp/phone instead — but
+   every enquiry is being written to the Cloudflare log rather than delivered, which is
+   also the one place PII currently lands. Configuring a provider fixes both.
+2. **HSTS is `max-age=31536000` only.** Add `; includeSubDomains` once you have confirmed
+   every subdomain (webmail included) is HTTPS, and `; preload` only if you intend the
+   commitment — preload is hard to undo.
+3. **A WAF rate-limiting rule on `/api/contact`**, as above.
+4. The old WordPress install on `robas-law.co.il` is still serving injected SEO spam.
+   Cutting DNS over to this deployment is itself the fix.
 
 ## Local preview
 
