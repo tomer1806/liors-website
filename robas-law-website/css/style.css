@@ -227,7 +227,7 @@ h1, h2, h3, h4 {
 }
 
 .nav__brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-.nav__mark { width: 36px; height: 34px; }
+.nav__mark { width: 36px; height: auto; }   /* height auto: forcing both squashed it */
 .nav__wordmark { display: flex; flex-direction: column; line-height: 1.1; }
 .nav__wordmark-name {
     font-family: var(--font-latin);
@@ -454,7 +454,7 @@ h1, h2, h3, h4 {
     padding: 0 var(--pad) clamp(56px, 8vw, 104px);
 }
 
-.hero__mark { width: 62px; height: auto; margin-bottom: 30px; opacity: .95; }
+.hero__mark { width: 54px; height: auto; margin-bottom: 28px; opacity: .95; }
 
 .hero__title {
     font-size: clamp(2.6rem, 7vw, 5rem);
@@ -1241,7 +1241,24 @@ a.band__value:hover { color: var(--oak); }
     grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
     gap: clamp(28px, 4vw, 56px);
 }
-.footer__logo { width: 150px; height: auto; margin-bottom: 22px; }
+.footer__lockup { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.footer__mark { width: 40px; height: auto; }
+.footer__wordmark { display: flex; flex-direction: column; line-height: 1.1; }
+.footer__wordmark-name {
+    font-family: var(--font-latin);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: .2em;
+    color: var(--white);
+}
+.footer__wordmark-sub {
+    font-family: var(--font-latin);
+    font-size: .56rem;
+    font-weight: 300;
+    letter-spacing: .26em;
+    color: rgba(255, 255, 255, 0.52);
+    margin-top: 4px;
+}
 .footer__about { font-size: .93rem; font-weight: 300; max-width: 40ch; margin-bottom: 22px; }
 
 .footer__social {
