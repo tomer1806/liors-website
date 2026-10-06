@@ -342,10 +342,21 @@ it into the CSP automatically, like the JSON-LD.
 
 - Size buttons use `aria-disabled`, not `disabled`: a disabled button drops keyboard focus
   the moment the visitor reaches the limit.
-- Read-aloud uses the browser's own `speechSynthesis`, offered only when a Hebrew voice
-  exists (reading Hebrew with an English voice is noise). Text is spoken in short chunks
-  because Chrome drops a single utterance that runs past ~15 seconds. The breadcrumb and
-  the form honeypot are excluded from what is read.
+- Read-aloud uses the browser's own `speechSynthesis`. It shipped working on desktop and
+  **silently dead on Android Chrome**; the rewrite (October 2026) handles the engine's traps.
+  Keep these if you touch it:
+  - never `cancel()` unless something is playing: on Android a cancel lands asynchronously
+    and swallows the `speak()` that follows it
+  - an **empty** `getVoices()` list means "unknown", not "no Hebrew"; several Android devices
+    return one while speaking fine. Disable only for a non-empty list with no Hebrew voice
+  - pick the voice fresh at click time (stale voice objects are dropped silently), and keep
+    every queued utterance referenced until reading ends (unreferenced ones get collected)
+  - never fail silently: each engine error, and a start that never comes (6 s watchdog),
+    shows the reason in the panel and logs `[a11y]` to the console
+  - text is spoken in ~220-character chunks (Chrome drops one utterance past ~15 s);
+    the breadcrumb and the form honeypot are not read
+  - the embedded test browser in Claude Code speaks where Android does not: **test on a
+    real phone**, not only there
 - "Stop motion" is live: `main.js` asks `isStill()` at each tick rather than reading the
   preference once at load, so the carousel and parallax stop the moment it is switched on.
 

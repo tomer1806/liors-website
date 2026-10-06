@@ -432,44 +432,82 @@
         };
 
         /* --- read aloud ---
-           The browser's own speech engine: nothing leaves the device and nothing loads from a
-           third party. Offered only when a Hebrew voice exists, since reading Hebrew with an
-           English voice produces noise rather than speech. */
+           The browser's own speech engine: nothing leaves the device, nothing loads from a
+           third party. Written around the engines' known traps, all of which hit Android:
+
+           - cancel() followed immediately by speak() can swallow the new speech, because the
+             cancel lands asynchronously. So cancel() runs only when something is playing.
+           - Some devices return an EMPTY voice list even though the system engine speaks fine.
+             An empty list is treated as "unknown", not "no Hebrew"; only a list that has
+             voices but none in Hebrew disables the button.
+           - Utterances with no live reference can be garbage-collected mid-queue, so their
+             end events never fire. They are kept in `queue` until reading ends.
+           - Failure must never be silent: every error, and a start that never comes, ends
+             with a visible message saying why. */
 
         var speech = window.speechSynthesis;
         var speechBox = document.getElementById('a11ySpeech');
         var readBtn = document.getElementById('a11yRead');
         var readHint = document.getElementById('a11yReadHint');
-        var hebrewVoice = null;
-        var voicesSettled = false;
+        var READ_HINT = 'סימון טקסט בעמוד לפני הלחיצה יקריא רק אותו.';
+        var NO_HEBREW = 'במכשיר זה לא מותקן קול בעברית. אפשר להוסיף אותו בהגדרות ההקראה (טקסט לדיבור) של המכשיר, או להיעזר בקורא המסך.';
+        var voicesKnown = false;
         var reading = false;
+        var queue = [];
+        var startWatch = null;
 
-        var findHebrewVoice = function () {
-            var voices = speech.getVoices();
-
-            for (var i = 0; i < voices.length; i++) {
-                if (/^(he|iw)([-_]|$)/i.test(voices[i].lang)) return voices[i];
-            }
-
-            return null;
+        var isHebrew = function (voice) {
+            return /^(he|iw)([-_]|$)/i.test(voice.lang);
         };
 
-        var syncReadButton = function () {
-            var unavailable = voicesSettled === true && hebrewVoice === null;
+        /* Asked fresh at the moment of speaking: a voice object kept from an earlier list
+           can go stale after `voiceschanged`, and some engines then drop it silently. */
+        var pickVoice = function () {
+            var voices = speech.getVoices();
+            var local = null;
+            var any = null;
+
+            for (var i = 0; i < voices.length; i++) {
+                if (isHebrew(voices[i]) === false) continue;
+                if (any === null) any = voices[i];
+                if (local === null && voices[i].localService === true) local = voices[i];
+            }
+
+            return { voice: local || any, listed: voices.length };
+        };
+
+        // the button is disabled only when the list is real, non-empty, and has no Hebrew
+        var noHebrewVoice = function () {
+            var found = pickVoice();
+            return voicesKnown === true && found.listed > 0 && found.voice === null;
+        };
+
+        var syncReadButton = function (message) {
+            var unavailable = reading === false && noHebrewVoice();
 
             setDisabled(readBtn, unavailable);
             readBtn.setAttribute('aria-pressed', String(reading));
             readBtn.textContent = reading ? 'עצירת ההקראה' : 'הקראת העמוד';
-            readHint.textContent = unavailable
-                ? 'בדפדפן זה לא מותקן קול בעברית. אפשר להיעזר בקורא המסך של המכשיר.'
-                : 'סימון טקסט בעמוד לפני הלחיצה יקריא רק אותו.';
+            readHint.textContent = message || (unavailable ? NO_HEBREW : READ_HINT);
+        };
+
+        var finishReading = function (message) {
+            window.clearTimeout(startWatch);
+            reading = false;
+            queue = [];
+            syncReadButton(message);
         };
 
         var stopReading = function () {
             if (speech === undefined) return;
-            reading = false;
-            speech.cancel();
-            syncReadButton();
+            if (speech.speaking || speech.pending) speech.cancel();
+            finishReading();
+        };
+
+        var failMessage = function (code) {
+            if (code === 'language-unavailable' || code === 'voice-unavailable') return NO_HEBREW;
+            if (code === 'not-allowed') return 'הדפדפן חסם את ההקראה. נסו ללחוץ שוב על הכפתור.';
+            return 'ההקראה לא זמינה כרגע במכשיר הזה. אפשר להיעזר בקורא המסך של המכשיר.';
         };
 
         var pageText = function () {
@@ -479,15 +517,15 @@
             var main = document.getElementById('main');
             if (main === null) return '';
 
-            // innerText already skips anything display:none; this hides the form honeypot too
+            // innerText already skips anything display:none; this hides the honeypot and breadcrumb
             root.classList.add('a11y-snapshot');
             var text = main.innerText;
             root.classList.remove('a11y-snapshot');
             return text;
         };
 
-        /* Chrome silently drops a single utterance that runs past ~15 seconds, so the page is
-           spoken a sentence or two at a time. */
+        /* Chrome drops a single utterance that runs past ~15 seconds, so the page is spoken
+           a sentence or two at a time. */
         var toChunks = function (text) {
             var chunks = [];
             var buf = '';
@@ -512,51 +550,68 @@
             var chunks = toChunks(pageText());
             if (chunks.length === 0) return;
 
-            speech.cancel();
+            var voice = pickVoice().voice;
+            var started = false;
+
+            // only cancel something that is actually playing: see the note at the top
+            if (speech.speaking || speech.pending) speech.cancel();
+
+            // an engine left paused (tab was in the background) ignores new speech until resumed
+            if (typeof speech.resume === 'function') speech.resume();
+
             reading = true;
+            queue = [];
             syncReadButton();
 
             chunks.forEach(function (chunk, i) {
                 var u = new SpeechSynthesisUtterance(chunk);
-                u.lang = 'he-IL';
-                if (hebrewVoice !== null) u.voice = hebrewVoice;
+                u.lang = voice !== null ? voice.lang : 'he-IL';
+                if (voice !== null) u.voice = voice;
+
+                u.onstart = function () { started = true; window.clearTimeout(startWatch); };
 
                 if (i === chunks.length - 1) {
-                    u.onend = function () { reading = false; syncReadButton(); };
+                    u.onend = function () { if (reading) finishReading(); };
                 }
 
                 u.onerror = function (e) {
-                    // cancel() reports its own interruption as an error; that is not a failure
-                    if (e.error !== 'interrupted' && e.error !== 'canceled') stopReading();
+                    // our own cancel() reports itself as an error; that is not a failure
+                    if (e.error === 'interrupted' || e.error === 'canceled') return;
+                    if (window.console) window.console.warn('[a11y] speech error:', e.error);
+                    if (speech.speaking || speech.pending) speech.cancel();
+                    finishReading(failMessage(e.error));
                 };
 
+                queue.push(u);   // hold a reference until reading ends, or it can be collected
                 speech.speak(u);
             });
+
+            // the engine accepted the queue but never began: say so instead of sitting silent
+            startWatch = window.setTimeout(function () {
+                if (started === false && reading === true) {
+                    if (window.console) window.console.warn('[a11y] speech never started');
+                    if (speech.speaking || speech.pending) speech.cancel();
+                    finishReading(failMessage(pickVoice().voice === null ? 'language-unavailable' : 'synthesis-failed'));
+                }
+            }, 6000);
         };
 
         if (speech === undefined || typeof window.SpeechSynthesisUtterance !== 'function') {
             speechBox.hidden = true;
         } else {
             var settleVoices = function () {
-                hebrewVoice = findHebrewVoice();
-                if (hebrewVoice !== null) voicesSettled = true;
-                syncReadButton();
+                if (pickVoice().listed > 0) voicesKnown = true;
+                if (reading === false) syncReadButton();
             };
 
             settleVoices();
 
             if (typeof speech.addEventListener === 'function') {
-                speech.addEventListener('voiceschanged', function () {
-                    voicesSettled = true;
-                    settleVoices();
-                });
+                speech.addEventListener('voiceschanged', settleVoices);
             }
 
-            // some browsers never fire voiceschanged; after a moment, trust what the list says
-            window.setTimeout(function () {
-                voicesSettled = true;
-                settleVoices();
-            }, 1500);
+            // engines that never fire voiceschanged: look once more after a moment
+            window.setTimeout(settleVoices, 1500);
 
             readBtn.addEventListener('click', function () {
                 if (readBtn.getAttribute('aria-disabled') === 'true') return;
