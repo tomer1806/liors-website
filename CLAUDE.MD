@@ -6,7 +6,8 @@ Guidance for Claude Code when working in this repository.
 
 Website for **Lior Robas Law Firm & Notary** (משרד עורכי דין ונוטריון ליאור רובס).
 - Domain: robas-law.co.il
-- Hosting: Cloudflare Pages
+- Hosting: **Cloudflare Workers** (static assets + a small Worker for `/api/contact`), deployed by
+  Workers Builds on every push. Not Pages — see "Workers, not Pages" below.
 - Office: שד׳ טום לנטוס 8, בית אופל, קומה חמישית, נתניה (Tom Lantos Blvd 8, "Opal House", 5th floor, Netanya)
   - The firm has moved more than once: קראוזה 3 (to ~2019) → הגביש 4, בית טיטניום → the current address.
   - Every form of the address lives in `site.json` (`address`, `addressShort`, `addressStreet`,
@@ -43,7 +44,7 @@ otherwise `node build.js` is safe and fast.
 - RTL Hebrew (`lang="he" dir="rtl"`), applied once in `site-src/partials/layout.html`.
 - Fonts: **Assistant** (all Hebrew, weights 200–600), **Jost** (Latin wordmark and
   numerals only). Frank Ruhl Libre and Noto Sans Hebrew were removed in the 2026 redesign.
-- Contact form backend: Cloudflare Pages Function (`functions/api/contact.js`, Mailgun).
+- Contact form backend: a Worker route — `worker/index.js` sends `/api/contact` to `worker/contact.js` (Mailgun or Resend).
 
 ## Design system
 
@@ -272,7 +273,7 @@ The Maps iframe deliberately carries **no `referrerpolicy` attribute**. It used 
 `no-referrer-when-downgrade`, which *overrode* the document policy and widened it from
 origin-only to full-URL. Leaving the attribute off lets `Referrer-Policy` apply.
 
-### `functions/api/contact.js`
+### `worker/contact.js`
 
 The only code that runs on request, and the only thing worth attacking: it spends money
 (a mail-provider send) and lands in a human inbox. Controls, in order: same-origin check,
@@ -362,18 +363,34 @@ it into the CSP automatically, like the JSON-LD.
 node build.js && cd robas-law-website && python3 -m http.server 8899
 ```
 
-Use `npx wrangler pages dev robas-law-website/` when testing the contact form, since
-plain HTTP has no `/api/contact` route.
+Use `npx wrangler dev` (the `robas-worker` entry in `.claude/launch.json`, port 8787) when
+testing the contact form: it runs the real Worker and assets locally, `_headers` and
+`_redirects` included. Plain HTTP has no `/api/contact` route.
 
 ## Deployment
 
+Pushing to `main` deploys: Cloudflare Workers Builds runs `wrangler deploy`, which reads
+`wrangler.jsonc`. To deploy by hand:
+
 ```bash
 node build.js
-npx wrangler pages deploy robas-law-website/
+npx wrangler deploy
 ```
 
-Asset directory is `robas-law-website/`. Build output is committed, so Cloudflare needs
-no build command configured.
+Build output is committed, so Cloudflare needs no build command.
+
+### ⚠️ Workers, not Pages
+
+- **Everything inside `robas-law-website/` is published as a public file.** Never put server
+  code there. Until October 2026 the contact handler sat in `robas-law-website/functions/`,
+  a Pages convention a Worker ignores: `POST /api/contact` returned 404 on the live site, and
+  the handler's source was downloadable at `/functions/api/contact.js`, rate-limit thresholds
+  and honeypot field name included. It now lives in `worker/`.
+- `wrangler.jsonc` sets `keep_vars: true`. Without it, every deploy deletes plain-text
+  variables set in the dashboard, which is where the mail settings live. Put API keys in
+  as **Secrets**, not plain variables.
+- Workers serves `/about.html` as a 307 to `/about` (its default `html_handling`). That is
+  not caused by the Worker code; the static-only deploy did the same.
 
 ## Live site caveat
 

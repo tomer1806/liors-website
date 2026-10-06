@@ -6,7 +6,7 @@
    into plain static HTML in robas-law-website/.
 
    No dependencies. Run:  node build.js
-   Output is committed to the repo, so Cloudflare Pages needs
+   Output is committed to the repo, so Cloudflare Workers Builds needs
    no build step of its own.
    ============================================================ */
 

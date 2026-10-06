@@ -1,0 +1,4 @@
+# local state from `wrangler dev` — never commit
+.wrangler/
+node_modules/
+.DS_Store

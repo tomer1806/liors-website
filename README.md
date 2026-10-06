@@ -1,7 +1,7 @@
 # Robas Law — Website
 
 Website for **משרד עורכי דין ונוטריון ליאור רובס** (Lior Robas Law Firm & Notary), Netanya.
-Vanilla HTML/CSS/JS, Hebrew RTL, deployed on Cloudflare Pages.
+Vanilla HTML/CSS/JS, Hebrew RTL, deployed as a Cloudflare Worker with static assets.
 
 ---
 
@@ -15,13 +15,14 @@ site-src/                     ← EDIT HERE
 └── pages/                    per-page content only (front-matter + body)
 
 build.js                      assembles site-src → robas-law-website (no dependencies)
+wrangler.jsonc                Cloudflare Worker config (assets + the /api/contact route)
+worker/                       index.js routes /api/contact → contact.js; never inside the public folder
 
 robas-law-website/            ← BUILD OUTPUT, committed, what Cloudflare serves
 ├── *.html                    15 generated pages — do not hand-edit, they get overwritten
 ├── css/style.css             the design system (hand-written, edit directly)
 ├── js/main.js                site behaviour (hand-written, edit directly)
 ├── assets/                   logos (SVG), client logos (PNG), photos
-├── functions/api/contact.js  Cloudflare Pages Function for the contact form
 ├── _headers                  security headers + caching
 └── _redirects                301s from every legacy WordPress URL
 ```
@@ -52,8 +53,8 @@ you commit.
 cd robas-law-website && python3 -m http.server 8899
 ```
 
-Then open http://localhost:8899. For the contact form, use
-`npx wrangler pages dev robas-law-website/` instead — plain HTTP has no `/api/contact`.
+Then open http://localhost:8899. For the contact form, run `npx wrangler dev` from the
+repo root instead (port 8787): plain HTTP has no `/api/contact`.
 
 ---
 
@@ -123,12 +124,16 @@ filenames. They render monochrome and return to full colour on hover.
 
 ## Deployment
 
-Cloudflare Pages, asset directory `robas-law-website/`.
+Cloudflare Worker, configured by `wrangler.jsonc`: static assets from `robas-law-website/`,
+plus `worker/index.js`, which routes `/api/contact` to `worker/contact.js`. Pushing to
+`main` deploys via Workers Builds. By hand:
 
 ```bash
 node build.js
-npx wrangler pages deploy robas-law-website/
+npx wrangler deploy
 ```
+
+Server code must never go inside `robas-law-website/` — everything there is public.
 
 `_headers` caches `/css/*`, `/js/*` and `/assets/*` as immutable for a year, so
 `build.js` appends a content hash to the stylesheet and script URLs

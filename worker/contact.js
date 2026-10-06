@@ -1,9 +1,14 @@
 /**
- * Cloudflare Pages Function — contact form handler
+ * Contact form handler
  *
  * POST /api/contact  →  emails the enquiry to the office.
  *
- * ── Configuration (Cloudflare → Settings → Environment variables) ──
+ * Routed by worker/index.js. It keeps the Pages Function signature (onRequestPost /
+ * onRequestOptions taking a { request, env } context) so it would also run unchanged
+ * as a Pages Function. It must NOT live inside robas-law-website/: everything there
+ * is published as a static file.
+ *
+ * ── Configuration (Cloudflare → Workers → robas-law-website → Settings → Variables) ──
  *
  *   NOTIFICATION_EMAIL   where enquiries are delivered (default office@robas-law.co.il)
  *

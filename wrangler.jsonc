@@ -1,0 +1,17 @@
+{
+  // Cloudflare Worker config. Workers Builds runs `wrangler deploy` from the repo root.
+  // `name` must match the Worker in the dashboard, or the build refuses to deploy.
+  "name": "robas-law-website",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-06-01",
+
+  "assets": {
+    // build.js writes the site here; _headers and _redirects in it still apply
+    "directory": "./robas-law-website",
+    "binding": "ASSETS"
+  },
+
+  // Without this, every deploy deletes plain-text variables set in the dashboard. The mail
+  // provider settings (NOTIFICATION_EMAIL, MAILGUN_DOMAIN, ...) are meant to live there.
+  "keep_vars": true
+}
