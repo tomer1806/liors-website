@@ -6,7 +6,7 @@
    into plain static HTML in robas-law-website/.
 
    No dependencies. Run:  node build.js
-   Output is committed to the repo, so Cloudflare Pages needs
+   Output is committed to the repo, so Cloudflare Workers Builds needs
    no build step of its own.
    ============================================================ */
 
@@ -346,6 +346,10 @@ for (const file of fs.readdirSync(PAGES).filter((f) => f.endsWith('.html')).sort
         WA_HREF:          waHref,
         WA_BASE:          waBase,
         MAP_SRC:          mapSrc,
+        // omitted entirely until the firm names someone, rather than printing an empty label
+        A11Y_COORDINATOR_ROW: site.accessibilityCoordinator
+            ? `<div class="detail-list__row"><span class="detail-list__label">פניות בנושא נגישות</span><span class="detail-list__value">${esc(site.accessibilityCoordinator)}</span></div>`
+            : '',
         YEAR:             String(year),
         YEARS_EXPERIENCE: String(yearsExperience),
         YEARS_SHPIGLER:   String(yearsShpigler),

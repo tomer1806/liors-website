@@ -6,7 +6,8 @@ Guidance for Claude Code when working in this repository.
 
 Website for **Lior Robas Law Firm & Notary** (משרד עורכי דין ונוטריון ליאור רובס).
 - Domain: robas-law.co.il
-- Hosting: Cloudflare Pages
+- Hosting: **Cloudflare Workers** (static assets + a small Worker for `/api/contact`), deployed by
+  Workers Builds on every push. Not Pages — see "Workers, not Pages" below.
 - Office: שד׳ טום לנטוס 8, בית אופל, קומה חמישית, נתניה (Tom Lantos Blvd 8, "Opal House", 5th floor, Netanya)
   - The firm has moved more than once: קראוזה 3 (to ~2019) → הגביש 4, בית טיטניום → the current address.
   - Every form of the address lives in `site.json` (`address`, `addressShort`, `addressStreet`,
@@ -43,7 +44,7 @@ otherwise `node build.js` is safe and fast.
 - RTL Hebrew (`lang="he" dir="rtl"`), applied once in `site-src/partials/layout.html`.
 - Fonts: **Assistant** (all Hebrew, weights 200–600), **Jost** (Latin wordmark and
   numerals only). Frank Ruhl Libre and Noto Sans Hebrew were removed in the 2026 redesign.
-- Contact form backend: Cloudflare Pages Function (`functions/api/contact.js`, Mailgun).
+- Contact form backend: a Worker route — `worker/index.js` sends `/api/contact` to `worker/contact.js` (Mailgun or Resend).
 
 ## Design system
 
@@ -114,6 +115,7 @@ vocabulary for anything you write.
 | `house-rules.html` | חוקי הבית |
 | `contact.html` | צור קשר |
 | `privacy.html` | הצהרת פרטיות |
+| `accessibility.html` | הצהרת נגישות |
 
 The old WordPress site had **eight** ייפוי־כוח־מתמשך pages; they are consolidated into
 four here, with 301s from all eight in `_redirects`.
@@ -271,7 +273,7 @@ The Maps iframe deliberately carries **no `referrerpolicy` attribute**. It used 
 `no-referrer-when-downgrade`, which *overrode* the document policy and widened it from
 origin-only to full-URL. Leaving the attribute off lets `Referrer-Policy` apply.
 
-### `functions/api/contact.js`
+### `worker/contact.js`
 
 The only code that runs on request, and the only thing worth attacking: it spends money
 (a mail-provider send) and lands in a human inbox. Controls, in order: same-origin check,
@@ -303,24 +305,92 @@ Two of those deserve a note:
 4. The old WordPress install on `robas-law.co.il` is still serving injected SEO spam.
    Cutting DNS over to this deployment is itself the fix.
 
+## Accessibility
+
+Required in Israel for a business serving the public: תקנות שוויון זכויות לאנשים עם
+מוגבלות (התאמות נגישות לשירות), התשע״ג-2013, תקנה 35, against **ת״י 5568** (WCAG 2.0 AA).
+Audited and fixed October 2026. A rendered sweep of every visible text element (1,478 of
+them across all pages) passes in both normal and high-contrast mode, and no page overflows
+horizontally at 640px (200% zoom) or 320px.
+
+### Rules that keep it passing
+
+- **`--oak-deep` is `#806036`, not the original `#A97F47`.** It is used as *small text*
+  (eyebrows, roles, case areas) and the old value was 2.9:1 on `--paper-2`. Do not lighten it.
+- **White text on dark surfaces needs at least 46% opacity on `--ink` and 49% on
+  `--ink-2`.** Four labels sat at 42–45% and failed; they are now 55%. Keep any new
+  translucent-white text at 0.55 or above.
+- **Photo-band captions sit on an ink plate** (`.band-photo__text`). White straight on the
+  photographs measured 2.2–2.9:1 on eight of nine bands. Darkening every photo to 60% would
+  also have passed; the plate was chosen so the photography stays bright.
+- **`html { font-size: 100% }`, never a px value.** A px root overrides the visitor's own
+  browser font-size setting.
+- **No `outline: none` on focus.** The ring is `--focus`: `--oak-deep` on light surfaces,
+  `--oak` on dark ones (both ≥3:1 against their background).
+- **Heading levels never skip.** Where card titles are `h3` by design (service cards, case
+  cards), the page carries a `.visually-hidden` `h2` above them.
+- **No inline `style=` and no inline scripts except the two hashed ones** — the CSP depends on it.
+
+### The accessibility panel (`site-src/partials/a11y.html`)
+
+Self-built rather than a third-party overlay: the CSP would block an external script, and
+overlays are known to interfere with screen readers. Every option is a class on `<html>`
+(`a11y-text-1..3`, `a11y-contrast`, `a11y-links`, `a11y-spacing`, `a11y-motion`) and
+`style.css` does the work. Preferences live in `localStorage` under `robas-a11y`, and a
+one-line inline script in `<head>` restores them **before first paint** — `build.js` hashes
+it into the CSP automatically, like the JSON-LD.
+
+- Size buttons use `aria-disabled`, not `disabled`: a disabled button drops keyboard focus
+  the moment the visitor reaches the limit.
+- Read-aloud uses the browser's own `speechSynthesis`, offered only when a Hebrew voice
+  exists (reading Hebrew with an English voice is noise). Text is spoken in short chunks
+  because Chrome drops a single utterance that runs past ~15 seconds. The breadcrumb and
+  the form honeypot are excluded from what is read.
+- "Stop motion" is live: `main.js` asks `isStill()` at each tick rather than reading the
+  preference once at load, so the carousel and parallax stop the moment it is switched on.
+
+### Still on the firm's side
+
+- `site.json` → `accessibilityCoordinator` is **עו״ד ליאור רובס** (owner, and the person who can
+  authorise a fix). Blank it and the row is omitted. Update `accessibilityUpdated` whenever the
+  site is re-checked.
+- The statement claims conformance. For legal protection the usual step is to have a
+  **מורשה נגישות שירות** review and sign off on it.
+
 ## Local preview
 
 ```bash
 node build.js && cd robas-law-website && python3 -m http.server 8899
 ```
 
-Use `npx wrangler pages dev robas-law-website/` when testing the contact form, since
-plain HTTP has no `/api/contact` route.
+Use `npx wrangler dev` (the `robas-worker` entry in `.claude/launch.json`, port 8787) when
+testing the contact form: it runs the real Worker and assets locally, `_headers` and
+`_redirects` included. Plain HTTP has no `/api/contact` route.
 
 ## Deployment
 
+Pushing to `main` deploys: Cloudflare Workers Builds runs `wrangler deploy`, which reads
+`wrangler.jsonc`. To deploy by hand:
+
 ```bash
 node build.js
-npx wrangler pages deploy robas-law-website/
+npx wrangler deploy
 ```
 
-Asset directory is `robas-law-website/`. Build output is committed, so Cloudflare needs
-no build command configured.
+Build output is committed, so Cloudflare needs no build command.
+
+### ⚠️ Workers, not Pages
+
+- **Everything inside `robas-law-website/` is published as a public file.** Never put server
+  code there. Until October 2026 the contact handler sat in `robas-law-website/functions/`,
+  a Pages convention a Worker ignores: `POST /api/contact` returned 404 on the live site, and
+  the handler's source was downloadable at `/functions/api/contact.js`, rate-limit thresholds
+  and honeypot field name included. It now lives in `worker/`.
+- `wrangler.jsonc` sets `keep_vars: true`. Without it, every deploy deletes plain-text
+  variables set in the dashboard, which is where the mail settings live. Put API keys in
+  as **Secrets**, not plain variables.
+- Workers serves `/about.html` as a 307 to `/about` (its default `html_handling`). That is
+  not caused by the Worker code; the static-only deploy did the same.
 
 ## Live site caveat
 
