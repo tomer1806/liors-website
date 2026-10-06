@@ -114,6 +114,7 @@ vocabulary for anything you write.
 | `house-rules.html` | חוקי הבית |
 | `contact.html` | צור קשר |
 | `privacy.html` | הצהרת פרטיות |
+| `accessibility.html` | הצהרת נגישות |
 
 The old WordPress site had **eight** ייפוי־כוח־מתמשך pages; they are consolidated into
 four here, with 301s from all eight in `_redirects`.
@@ -302,6 +303,58 @@ Two of those deserve a note:
 3. **A WAF rate-limiting rule on `/api/contact`**, as above.
 4. The old WordPress install on `robas-law.co.il` is still serving injected SEO spam.
    Cutting DNS over to this deployment is itself the fix.
+
+## Accessibility
+
+Required in Israel for a business serving the public: תקנות שוויון זכויות לאנשים עם
+מוגבלות (התאמות נגישות לשירות), התשע״ג-2013, תקנה 35, against **ת״י 5568** (WCAG 2.0 AA).
+Audited and fixed October 2026. A rendered sweep of every visible text element (1,478 of
+them across all pages) passes in both normal and high-contrast mode, and no page overflows
+horizontally at 640px (200% zoom) or 320px.
+
+### Rules that keep it passing
+
+- **`--oak-deep` is `#806036`, not the original `#A97F47`.** It is used as *small text*
+  (eyebrows, roles, case areas) and the old value was 2.9:1 on `--paper-2`. Do not lighten it.
+- **White text on dark surfaces needs at least 46% opacity on `--ink` and 49% on
+  `--ink-2`.** Four labels sat at 42–45% and failed; they are now 55%. Keep any new
+  translucent-white text at 0.55 or above.
+- **Photo-band captions sit on an ink plate** (`.band-photo__text`). White straight on the
+  photographs measured 2.2–2.9:1 on eight of nine bands. Darkening every photo to 60% would
+  also have passed; the plate was chosen so the photography stays bright.
+- **`html { font-size: 100% }`, never a px value.** A px root overrides the visitor's own
+  browser font-size setting.
+- **No `outline: none` on focus.** The ring is `--focus`: `--oak-deep` on light surfaces,
+  `--oak` on dark ones (both ≥3:1 against their background).
+- **Heading levels never skip.** Where card titles are `h3` by design (service cards, case
+  cards), the page carries a `.visually-hidden` `h2` above them.
+- **No inline `style=` and no inline scripts except the two hashed ones** — the CSP depends on it.
+
+### The accessibility panel (`site-src/partials/a11y.html`)
+
+Self-built rather than a third-party overlay: the CSP would block an external script, and
+overlays are known to interfere with screen readers. Every option is a class on `<html>`
+(`a11y-text-1..3`, `a11y-contrast`, `a11y-links`, `a11y-spacing`, `a11y-motion`) and
+`style.css` does the work. Preferences live in `localStorage` under `robas-a11y`, and a
+one-line inline script in `<head>` restores them **before first paint** — `build.js` hashes
+it into the CSP automatically, like the JSON-LD.
+
+- Size buttons use `aria-disabled`, not `disabled`: a disabled button drops keyboard focus
+  the moment the visitor reaches the limit.
+- Read-aloud uses the browser's own `speechSynthesis`, offered only when a Hebrew voice
+  exists (reading Hebrew with an English voice is noise). Text is spoken in short chunks
+  because Chrome drops a single utterance that runs past ~15 seconds. The breadcrumb and
+  the form honeypot are excluded from what is read.
+- "Stop motion" is live: `main.js` asks `isStill()` at each tick rather than reading the
+  preference once at load, so the carousel and parallax stop the moment it is switched on.
+
+### Still on the firm's side
+
+- `site.json` → `accessibilityCoordinator` is **עו״ד ליאור רובס** (owner, and the person who can
+  authorise a fix). Blank it and the row is omitted. Update `accessibilityUpdated` whenever the
+  site is re-checked.
+- The statement claims conformance. For legal protection the usual step is to have a
+  **מורשה נגישות שירות** review and sign off on it.
 
 ## Local preview
 

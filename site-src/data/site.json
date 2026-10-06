@@ -30,6 +30,10 @@
   "facebook": "https://www.facebook.com/1432093250415826",
   "copyrightFrom": "2019",
 
+  "_accessibilityNote": "Used by accessibility.html. `accessibilityCoordinator` is the named contact for accessibility requests: Lior, as owner and the person who can authorise a fix. Blank it and the row is simply omitted. Update `accessibilityUpdated` whenever the site is re-checked.",
+  "accessibilityCoordinator": "עו״ד ליאור רובס",
+  "accessibilityUpdated": "אוקטובר 2026",
+
   "_experienceNote": "Seniority is computed at build time so nobody has to remember to bump it. All three years below are taken from the Israel Bar Association's official member register (israelbar.biz), matched to the firm by its phone number 09-8612894 — not from the site's own older marketing copy. Lior: admitted 10/06/2004. Shpigler: 30/06/1975. Orenstein: 15/06/2006 (written as a fixed year in the copy, so it never goes stale). Oren Avraham deliberately has no year here: he could not be matched to a register entry, see photo-credits-style note in the README.",
   "careerStartYear": 2004,
   "shpiglerAdmissionYear": 1975,
@@ -70,7 +74,8 @@
     { "label": "תיקים בולטים", "href": "notable-cases.html" },
     { "label": "לקוחות", "href": "clients.html" },
     { "label": "חוקי הבית", "href": "house-rules.html" },
-    { "label": "הצהרת פרטיות", "href": "privacy.html" }
+    { "label": "הצהרת פרטיות", "href": "privacy.html" },
+    { "label": "הצהרת נגישות", "href": "accessibility.html" }
   ],
 
   "_clientsNote": "Single source for BOTH client lists: the logo wall (`clients__grid`, on index.html and clients.html) and the full roll-call on clients.html. Before Sept 2026 the roll-call was hardcoded in clients.html and had already drifted from this array — the same client appeared as `אופק מערכות` in one and `אופק מחשבים` in the other, and as `אובזוטק אקוסטיקה` / `אוזבטק חיפויים וגימורים`. A client with a `slug` has a logo at assets/clients/<slug>.png and appears in both; one without a slug appears only in the roll-call. build.js fails if a slug has no matching PNG.",

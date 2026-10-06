@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var p=JSON.parse(localStorage.getItem('robas-a11y')||'null')||{},c=document.documentElement.classList,t=Number(p.text);if(t>0&&t<4)c.add('a11y-text-'+t);['contrast','links','spacing','motion'].forEach(function(k){if(p[k]===true)c.add('a11y-'+k)})}catch(e){}</script>
 <title>המשרד | ליאור רובס, משרד עורכי דין ונוטריון</title>
 <meta name="description" content="משרד עורכי דין ונוטריון ליאור רובס בנתניה. צוות המשרד, ההתחייבות שלנו ותחומי הפעילות.">
 <link rel="canonical" href="https://robas-law.co.il/about.html">
@@ -16,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=8f80c171">
+<link rel="stylesheet" href="css/style.css?v=e991ce98">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -295,6 +296,7 @@
                     <a class="footer__link" href="clients.html">לקוחות</a>
                     <a class="footer__link" href="house-rules.html">חוקי הבית</a>
                     <a class="footer__link" href="privacy.html">הצהרת פרטיות</a>
+                    <a class="footer__link" href="accessibility.html">הצהרת נגישות</a>
             </div>
 
             <div class="footer__col">
@@ -323,7 +325,48 @@
     </a>
 </div>
 
+<div class="a11y" id="a11y">
+    <button class="a11y__toggle" id="a11yToggle" type="button" aria-label="תפריט נגישות" aria-expanded="false" aria-controls="a11yPanel">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="4.2" r="2.1"/><path d="M19.6 8.1c-2.5.7-5 1-7.6 1s-5.1-.3-7.6-1l-.5 1.8c2 .6 4 .9 6.1 1v3.3l-2.3 7.2 1.8.6L12 15.6l2.5 6.4 1.8-.6-2.3-7.2v-3.3c2.1-.1 4.1-.4 6.1-1z"/></svg>
+    </button>
 
-<script src="js/main.js?v=c0a9dc7b" defer></script>
+    <div class="a11y__panel" id="a11yPanel" role="dialog" aria-modal="false" aria-labelledby="a11yTitle" tabindex="-1" hidden>
+        <div class="a11y__head">
+            <h2 class="a11y__title" id="a11yTitle">נגישות</h2>
+            <button class="a11y__close" type="button" aria-label="סגירת תפריט הנגישות">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>
+            </button>
+        </div>
+
+        <div role="group" aria-labelledby="a11yTextLabel">
+            <span class="a11y__label" id="a11yTextLabel">גודל טקסט</span>
+            <div class="a11y__stepper">
+                <button type="button" data-a11y="text-down" aria-label="הקטנת טקסט">א−</button>
+                <output class="a11y__value" id="a11yTextValue" aria-live="polite">100%</output>
+                <button type="button" data-a11y="text-up" aria-label="הגדלת טקסט">א+</button>
+            </div>
+        </div>
+
+        <div class="a11y__grid">
+            <button type="button" class="a11y__opt" data-a11y-flag="contrast" aria-pressed="false">ניגודיות גבוהה</button>
+            <button type="button" class="a11y__opt" data-a11y-flag="links" aria-pressed="false">הדגשת קישורים</button>
+            <button type="button" class="a11y__opt" data-a11y-flag="spacing" aria-pressed="false">ריווח טקסט</button>
+            <button type="button" class="a11y__opt" data-a11y-flag="motion" aria-pressed="false">עצירת אנימציות</button>
+        </div>
+
+        <div id="a11ySpeech">
+            <button type="button" class="a11y__opt a11y__opt--wide" id="a11yRead" aria-pressed="false">הקראת העמוד</button>
+            <p class="a11y__hint" id="a11yReadHint">סימון טקסט בעמוד לפני הלחיצה יקריא רק אותו.</p>
+        </div>
+
+        <div class="a11y__foot">
+            <button type="button" class="a11y__reset" data-a11y="reset">איפוס הגדרות</button>
+            <a class="a11y__link" href="accessibility.html">הצהרת נגישות</a>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/main.js?v=ec356b31" defer></script>
 </body>
 </html>

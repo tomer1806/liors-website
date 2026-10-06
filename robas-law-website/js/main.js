@@ -5,7 +5,15 @@
 (function () {
     'use strict';
 
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var root = document.documentElement;
+    var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    /* Motion is off when the OS asks for it, or when the visitor switches it off in the
+       accessibility panel. The second can change while the page is open, so this is
+       asked at the moment it matters rather than read once at load. */
+    var isStill = function () {
+        return motionQuery.matches || root.classList.contains('a11y-motion');
+    };
 
     /* ---------- nav: solid background once scrolled ---------- */
 
@@ -42,7 +50,7 @@
                     if (mobileMenu.classList.contains('is-open') === false) {
                         mobileMenu.hidden = true;
                     }
-                }, reduced ? 0 : 350);
+                }, isStill() ? 0 : 350);
             }
         };
 
@@ -123,7 +131,7 @@
         if (slides.length < 2 && dotsWrap !== null) dotsWrap.hidden = true;
         if (slides.length > 0) slides[0].classList.add('is-active');
 
-        if (slides.length > 1 && reduced === false) {
+        if (slides.length > 1) {
             var current = 0;
 
             var show = function (next) {
@@ -139,7 +147,7 @@
             };
 
             var timer = window.setInterval(function () {
-                if (document.hidden === false) {
+                if (document.hidden === false && isStill() === false) {
                     show((current + 1) % slides.length);
                 }
             }, 7000);
@@ -157,10 +165,16 @@
 
     var bands = Array.prototype.slice.call(document.querySelectorAll('.band-photo__img'));
 
-    if (bands.length > 0 && reduced === false) {
+    if (bands.length > 0) {
         var ticking = false;
 
         var positionBands = function () {
+            if (isStill() === true) {
+                bands.forEach(function (img) { img.style.transform = ''; });
+                ticking = false;
+                return;
+            }
+
             bands.forEach(function (img) {
                 // the image may have been pulled from the DOM by the error handler above
                 if (img.isConnected === false || img.parentElement === null) return;
@@ -193,7 +207,7 @@
 
     var risers = document.querySelectorAll('.reveal, .reveal-slide, .u-rise');
 
-    if (reduced === true || 'IntersectionObserver' in window === false) {
+    if (isStill() === true || 'IntersectionObserver' in window === false) {
         risers.forEach(function (el) { el.classList.add('visible'); });
     } else {
         var observer = new IntersectionObserver(function (entries) {
@@ -339,5 +353,266 @@
                     }
                 });
         });
+    }
+    /* ---------- accessibility panel ----------
+       Each option is a class on <html>; style.css does the rest. A short inline script in
+       <head> restores the same classes before first paint, so the page never flashes at
+       the default size for someone who enlarged it. */
+
+    var a11y = document.getElementById('a11y');
+
+    if (a11y !== null) {
+        var A11Y_KEY = 'robas-a11y';
+        var A11Y_FLAGS = ['contrast', 'links', 'spacing', 'motion'];
+        var A11Y_SIZES = [100, 120, 140, 160];
+
+        var a11yToggle = document.getElementById('a11yToggle');
+        var a11yPanel = document.getElementById('a11yPanel');
+        var a11yValue = document.getElementById('a11yTextValue');
+        var a11yDown = a11y.querySelector('[data-a11y="text-down"]');
+        var a11yUp = a11y.querySelector('[data-a11y="text-up"]');
+        var a11yFlags = Array.prototype.slice.call(a11y.querySelectorAll('[data-a11y-flag]'));
+
+        var readPrefs = function () {
+            try {
+                var saved = JSON.parse(window.localStorage.getItem(A11Y_KEY) || 'null');
+                return saved !== null && typeof saved === 'object' ? saved : {};
+            } catch (e) {
+                return {};
+            }
+        };
+
+        var prefs = readPrefs();
+
+        var savePrefs = function () {
+            try {
+                window.localStorage.setItem(A11Y_KEY, JSON.stringify(prefs));
+            } catch (e) {
+                // storage blocked (private mode, site data off): settings still apply to this page
+            }
+        };
+
+        var textStep = function () {
+            var step = Number(prefs.text) || 0;
+            return step >= 0 && step < A11Y_SIZES.length ? step : 0;
+        };
+
+        /* aria-disabled rather than disabled: a disabled button drops keyboard focus, so a
+           visitor pressing "larger" until the limit would be thrown back to the page top. */
+        var setDisabled = function (btn, off) {
+            btn.setAttribute('aria-disabled', String(off));
+        };
+
+        var applyPrefs = function () {
+            var step = textStep();
+
+            for (var i = 1; i < A11Y_SIZES.length; i++) {
+                root.classList.toggle('a11y-text-' + i, step === i);
+            }
+
+            A11Y_FLAGS.forEach(function (flag) {
+                root.classList.toggle('a11y-' + flag, prefs[flag] === true);
+            });
+
+            a11yValue.textContent = A11Y_SIZES[step] + '%';
+            setDisabled(a11yDown, step === 0);
+            setDisabled(a11yUp, step === A11Y_SIZES.length - 1);
+
+            a11yFlags.forEach(function (btn) {
+                btn.setAttribute('aria-pressed', String(prefs[btn.getAttribute('data-a11y-flag')] === true));
+            });
+        };
+
+        var setOpen = function (open) {
+            a11yPanel.hidden = open === false;
+            a11yToggle.setAttribute('aria-expanded', String(open));
+
+            // focus the dialog itself, so a screen reader announces its name before the controls
+            if (open) a11yPanel.focus();
+        };
+
+        /* --- read aloud ---
+           The browser's own speech engine: nothing leaves the device and nothing loads from a
+           third party. Offered only when a Hebrew voice exists, since reading Hebrew with an
+           English voice produces noise rather than speech. */
+
+        var speech = window.speechSynthesis;
+        var speechBox = document.getElementById('a11ySpeech');
+        var readBtn = document.getElementById('a11yRead');
+        var readHint = document.getElementById('a11yReadHint');
+        var hebrewVoice = null;
+        var voicesSettled = false;
+        var reading = false;
+
+        var findHebrewVoice = function () {
+            var voices = speech.getVoices();
+
+            for (var i = 0; i < voices.length; i++) {
+                if (/^(he|iw)([-_]|$)/i.test(voices[i].lang)) return voices[i];
+            }
+
+            return null;
+        };
+
+        var syncReadButton = function () {
+            var unavailable = voicesSettled === true && hebrewVoice === null;
+
+            setDisabled(readBtn, unavailable);
+            readBtn.setAttribute('aria-pressed', String(reading));
+            readBtn.textContent = reading ? 'עצירת ההקראה' : 'הקראת העמוד';
+            readHint.textContent = unavailable
+                ? 'בדפדפן זה לא מותקן קול בעברית. אפשר להיעזר בקורא המסך של המכשיר.'
+                : 'סימון טקסט בעמוד לפני הלחיצה יקריא רק אותו.';
+        };
+
+        var stopReading = function () {
+            if (speech === undefined) return;
+            reading = false;
+            speech.cancel();
+            syncReadButton();
+        };
+
+        var pageText = function () {
+            var selected = window.getSelection ? String(window.getSelection()).trim() : '';
+            if (selected.length > 0) return selected;
+
+            var main = document.getElementById('main');
+            if (main === null) return '';
+
+            // innerText already skips anything display:none; this hides the form honeypot too
+            root.classList.add('a11y-snapshot');
+            var text = main.innerText;
+            root.classList.remove('a11y-snapshot');
+            return text;
+        };
+
+        /* Chrome silently drops a single utterance that runs past ~15 seconds, so the page is
+           spoken a sentence or two at a time. */
+        var toChunks = function (text) {
+            var chunks = [];
+            var buf = '';
+
+            (text.match(/[^.!?;\n]+[.!?;]*/g) || []).forEach(function (part) {
+                var piece = part.trim();
+                if (piece === '') return;
+
+                if (buf !== '' && (buf + ' ' + piece).length > 220) {
+                    chunks.push(buf);
+                    buf = piece;
+                } else {
+                    buf = buf === '' ? piece : buf + ' ' + piece;
+                }
+            });
+
+            if (buf !== '') chunks.push(buf);
+            return chunks;
+        };
+
+        var startReading = function () {
+            var chunks = toChunks(pageText());
+            if (chunks.length === 0) return;
+
+            speech.cancel();
+            reading = true;
+            syncReadButton();
+
+            chunks.forEach(function (chunk, i) {
+                var u = new SpeechSynthesisUtterance(chunk);
+                u.lang = 'he-IL';
+                if (hebrewVoice !== null) u.voice = hebrewVoice;
+
+                if (i === chunks.length - 1) {
+                    u.onend = function () { reading = false; syncReadButton(); };
+                }
+
+                u.onerror = function (e) {
+                    // cancel() reports its own interruption as an error; that is not a failure
+                    if (e.error !== 'interrupted' && e.error !== 'canceled') stopReading();
+                };
+
+                speech.speak(u);
+            });
+        };
+
+        if (speech === undefined || typeof window.SpeechSynthesisUtterance !== 'function') {
+            speechBox.hidden = true;
+        } else {
+            var settleVoices = function () {
+                hebrewVoice = findHebrewVoice();
+                if (hebrewVoice !== null) voicesSettled = true;
+                syncReadButton();
+            };
+
+            settleVoices();
+
+            if (typeof speech.addEventListener === 'function') {
+                speech.addEventListener('voiceschanged', function () {
+                    voicesSettled = true;
+                    settleVoices();
+                });
+            }
+
+            // some browsers never fire voiceschanged; after a moment, trust what the list says
+            window.setTimeout(function () {
+                voicesSettled = true;
+                settleVoices();
+            }, 1500);
+
+            readBtn.addEventListener('click', function () {
+                if (readBtn.getAttribute('aria-disabled') === 'true') return;
+                if (reading) stopReading();
+                else startReading();
+            });
+
+            window.addEventListener('pagehide', stopReading);
+        }
+
+        /* --- wiring --- */
+
+        a11yToggle.addEventListener('click', function () {
+            setOpen(a11yPanel.hidden === true);
+        });
+
+        a11y.querySelector('.a11y__close').addEventListener('click', function () {
+            setOpen(false);
+            a11yToggle.focus();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && a11yPanel.hidden === false) {
+                setOpen(false);
+                a11yToggle.focus();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (a11yPanel.hidden === false && a11y.contains(e.target) === false) setOpen(false);
+        });
+
+        a11yPanel.addEventListener('click', function (e) {
+            var btn = e.target.closest('button');
+            if (btn === null || btn.getAttribute('aria-disabled') === 'true') return;
+
+            var action = btn.getAttribute('data-a11y');
+            var flag = btn.getAttribute('data-a11y-flag');
+
+            if (action === 'text-up') {
+                prefs.text = Math.min(textStep() + 1, A11Y_SIZES.length - 1);
+            } else if (action === 'text-down') {
+                prefs.text = Math.max(textStep() - 1, 0);
+            } else if (action === 'reset') {
+                prefs = {};
+                stopReading();
+            } else if (flag !== null) {
+                prefs[flag] = prefs[flag] !== true;
+            } else {
+                return;
+            }
+
+            applyPrefs();
+            savePrefs();
+        });
+
+        applyPrefs();
     }
 })();
