@@ -347,8 +347,15 @@ it into the CSP automatically, like the JSON-LD.
   Keep these if you touch it:
   - never `cancel()` unless something is playing: on Android a cancel lands asynchronously
     and swallows the `speak()` that follows it
-  - an **empty** `getVoices()` list means "unknown", not "no Hebrew"; several Android devices
-    return one while speaking fine. Disable only for a non-empty list with no Hebrew voice
+  - **never speak without a confirmed Hebrew voice.** With only `lang="he-IL"` and no Hebrew
+    voice loaded, the browser falls back to its default English voice, which skips every
+    Hebrew word: the page came out as just the phone number (measured with macOS `say`:
+    an English voice renders a Hebrew sentence as 0.6 s of near-silence). An earlier
+    version treated an empty voice list as "try anyway" and caused exactly that
+  - voice lists load late, so a click that finds no Hebrew voice waits up to 2.5 s for one
+    ("מחפש קול בעברית…") before showing the no-Hebrew message
+  - where to get a Hebrew voice is explained on `accessibility.html`; on Windows the
+    practical answer is Edge, which ships "Microsoft Avri Online (Natural)" (he-IL)
   - pick the voice fresh at click time (stale voice objects are dropped silently), and keep
     every queued utterance referenced until reading ends (unreferenced ones get collected)
   - never fail silently: each engine error, and a start that never comes (6 s watchdog),
