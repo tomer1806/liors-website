@@ -437,9 +437,11 @@
 
            - cancel() followed immediately by speak() can swallow the new speech, because the
              cancel lands asynchronously. So cancel() runs only when something is playing.
-           - Some devices return an EMPTY voice list even though the system engine speaks fine.
-             An empty list is treated as "unknown", not "no Hebrew"; only a list that has
-             voices but none in Hebrew disables the button.
+           - NEVER speak Hebrew without a confirmed Hebrew voice. With only lang="he-IL" and no
+             Hebrew voice loaded, browsers fall back to their default English voice, which skips
+             every Hebrew word and reads just the digits (measured: the page came out as the
+             phone number and nothing else). Voice lists also load late, so a click that finds
+             no Hebrew voice waits briefly for the list before deciding.
            - Utterances with no live reference can be garbage-collected mid-queue, so their
              end events never fire. They are kept in `queue` until reading ends.
            - Failure must never be silent: every error, and a start that never comes, ends
@@ -450,7 +452,8 @@
         var readBtn = document.getElementById('a11yRead');
         var readHint = document.getElementById('a11yReadHint');
         var READ_HINT = 'סימון טקסט בעמוד לפני הלחיצה יקריא רק אותו.';
-        var NO_HEBREW = 'במכשיר זה לא מותקן קול בעברית. אפשר להוסיף אותו בהגדרות ההקראה (טקסט לדיבור) של המכשיר, או להיעזר בקורא המסך.';
+        var NO_HEBREW = 'בדפדפן הזה לא נמצא קול בעברית, ולכן אין הקראה. איך מוסיפים קול עברי: בעמוד הצהרת הנגישות.';
+        var LOOKING = 'מחפש קול בעברית…';
         var voicesKnown = false;
         var reading = false;
         var queue = [];
@@ -553,6 +556,11 @@
             var voice = pickVoice().voice;
             var started = false;
 
+            if (voice === null) {
+                finishReading(NO_HEBREW);
+                return;
+            }
+
             // only cancel something that is actually playing: see the note at the top
             if (speech.speaking || speech.pending) speech.cancel();
 
@@ -565,8 +573,8 @@
 
             chunks.forEach(function (chunk, i) {
                 var u = new SpeechSynthesisUtterance(chunk);
-                u.lang = voice !== null ? voice.lang : 'he-IL';
-                if (voice !== null) u.voice = voice;
+                u.voice = voice;
+                u.lang = voice.lang;
 
                 u.onstart = function () { started = true; window.clearTimeout(startWatch); };
 
@@ -591,9 +599,40 @@
                 if (started === false && reading === true) {
                     if (window.console) window.console.warn('[a11y] speech never started');
                     if (speech.speaking || speech.pending) speech.cancel();
-                    finishReading(failMessage(pickVoice().voice === null ? 'language-unavailable' : 'synthesis-failed'));
+                    finishReading(failMessage('synthesis-failed'));
                 }
             }, 6000);
+        };
+
+        /* Resolves as soon as a Hebrew voice appears, or after `ms` regardless. Polls as well
+           as listening, because some engines never fire voiceschanged. */
+        var waitForHebrewVoice = function (ms) {
+            return new Promise(function (resolve) {
+                var startedAt = Date.now();
+                var done = false;
+
+                var finish = function () {
+                    if (done) return;
+                    done = true;
+                    if (typeof speech.removeEventListener === 'function') {
+                        speech.removeEventListener('voiceschanged', check);
+                    }
+                    resolve(pickVoice().voice);
+                };
+
+                var check = function () {
+                    if (pickVoice().voice !== null || Date.now() - startedAt >= ms) finish();
+                };
+
+                if (typeof speech.addEventListener === 'function') {
+                    speech.addEventListener('voiceschanged', check);
+                }
+
+                (function poll() {
+                    check();
+                    if (done === false) window.setTimeout(poll, 150);
+                })();
+            });
         };
 
         if (speech === undefined || typeof window.SpeechSynthesisUtterance !== 'function') {
@@ -615,8 +654,30 @@
 
             readBtn.addEventListener('click', function () {
                 if (readBtn.getAttribute('aria-disabled') === 'true') return;
-                if (reading) stopReading();
-                else startReading();
+                if (readBtn.getAttribute('aria-busy') === 'true') return;
+
+                if (reading) {
+                    stopReading();
+                    return;
+                }
+
+                // a Hebrew voice is already there: speak inside the click, which iOS requires
+                if (pickVoice().voice !== null) {
+                    startReading();
+                    return;
+                }
+
+                // otherwise the list may still be loading; wait a moment, then decide honestly
+                readBtn.setAttribute('aria-busy', 'true');
+                readHint.textContent = LOOKING;
+
+                waitForHebrewVoice(2500).then(function (voice) {
+                    readBtn.removeAttribute('aria-busy');
+                    voicesKnown = true;
+
+                    if (voice !== null) startReading();
+                    else finishReading(NO_HEBREW);
+                });
             });
 
             window.addEventListener('pagehide', stopReading);
