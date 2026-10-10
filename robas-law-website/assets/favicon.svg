@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <!-- Tab icon: the LR monogram from the header (logo-mark.svg), same geometry, white on the
+       site ink colour. Strokes are heavier than the header's on purpose: at 3 and 4.5 units they
+       would be under half a pixel in a 32px tab and disappear. -->
+  <rect width="240" height="240" fill="#161719"/>
+  <g transform="translate(0 8)" stroke="#FFFFFF" fill="none" stroke-linecap="butt">
+    <rect x="24" y="16" width="192" height="192" stroke-width="8"/>
+    <path d="M 72 52 L 72 172 L 140 172" stroke-width="12" stroke-linejoin="miter"/>
+    <path d="M 120 52 L 120 172" stroke-width="12"/>
+    <path d="M 120 52 C 120 52, 178 52, 178 100 C 178 140, 140 142, 120 142" stroke-width="12"/>
+    <path d="M 138 132 L 176 172" stroke-width="12"/>
+  </g>
+</svg>
