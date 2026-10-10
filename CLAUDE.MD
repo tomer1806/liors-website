@@ -83,6 +83,15 @@ All tokens are CSS custom properties in `:root` at the top of `css/style.css`.
 6. **Flat surfaces.** Hairline borders (`--line`), no rounded cards, no drop shadows,
    no gradients. Section separation comes from `--white` / `--paper` alternation.
 
+### Tab icon
+
+`assets/favicon.svg` is the header's LR monogram (`logo-mark.svg`) in white on `--ink`, with
+heavier strokes so it survives 16–32px. `favicon.ico` (16/32/48) and `assets/apple-touch-icon.png`
+(180, phone home screen) are rendered from it. The `.ico` is for Safari and crawlers, which do
+not use SVG icons; it carries `sizes="32x32"` so Chrome still picks the SVG. If you change the
+SVG, re-render both PNG versions. Never put `--` inside an SVG comment: it is invalid XML, and
+the browser then shows a broken-image icon.
+
 ### Component vocabulary
 
 `.index-list`/`.index-row` (numbered services) · `.roster` (team) · `.clients__grid`
