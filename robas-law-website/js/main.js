@@ -444,6 +444,10 @@
              no Hebrew voice waits briefly for the list before deciding.
            - Utterances with no live reference can be garbage-collected mid-queue, so their
              end events never fire. They are kept in `queue` until reading ends.
+           - A voice that claims Hebrew is not proof that Hebrew is heard. An English voice
+             handed Hebrew skips every letter and pronounces only the periods ("dot, dot"):
+             measured, 128 letters took Samantha 1.1 s and Carmit 12.5 s (5.9 s at a very fast
+             rate). So each sentence that ends far too quickly stops the reading with a message.
            - Failure must never be silent: every error, and a start that never comes, ends
              with a visible message saying why. */
 
@@ -454,6 +458,8 @@
         var READ_HINT = 'סימון טקסט בעמוד לפני הלחיצה יקריא רק אותו.';
         var NO_HEBREW = 'בדפדפן הזה לא נמצא קול בעברית, ולכן אין הקראה. איך מוסיפים קול עברי: בעמוד הצהרת הנגישות.';
         var LOOKING = 'מחפש קול בעברית…';
+        var NOT_HEBREW = 'הקול שהדפדפן בחר לא מקריא עברית, ולכן ההקראה נעצרה. איך מוסיפים קול עברי: בעמוד הצהרת הנגישות.';
+        var MS_PER_LETTER = 25;   // Carmit: ~98 ms per letter, ~46 at a very fast rate; English: ~9
         var voicesKnown = false;
         var reading = false;
         var queue = [];
@@ -527,6 +533,48 @@
             return text;
         };
 
+        /* False when a sentence with plenty of Hebrew finished far too fast to have been spoken.
+           Timed from the moment the sentence became next in line, not from its start event,
+           which some engines fire late: the span can only come out longer than the speech,
+           so a real Hebrew voice is never stopped by mistake. */
+        var spokeHebrew = function (text, since) {
+            var letters = (text.match(/[\u05D0-\u05EA]/g) || []).length;
+
+            if (letters < 30) return true;   // too short to judge
+            return Date.now() - since >= letters * MS_PER_LETTER;
+        };
+
+        /* Carmit (macOS/iOS Hebrew) reads a plain " inside a word as a word of its own, and
+           reads some abbreviations as ordinary words: עו״ד comes out as "עוד" (measured with
+           `say`: same length, 0.53 s). So text is put into spoken form before the engine gets it.
+           Abbreviations it already expands correctly (נדל״ן, דוא״ל, שד׳, א׳–ה׳) are left alone. */
+        var SPOKEN = [
+            ['עוה״ד', 'עורכי הדין'],
+            ['עו״ד', 'עורך דין'],
+            ['חוו״ד', 'חוות דעת'],
+            ['חו״ד', 'חוות דעת'],
+            ['מו״מ', 'משא ומתן'],
+            ['בע״מ', 'בערבון מוגבל'],
+            ['כיו״ב', 'כיוצא באלה'],
+            ['ת״י', 'תקן ישראלי'],
+            ['ש״ח', 'שקלים חדשים']
+        ].map(function (pair) {
+            // keeps up to two prefix letters (ו, ה, ב, ל, מ, ש, כ): ולעו״ד → ולעורך דין
+            return [new RegExp('(^|[^\\u05D0-\\u05EA])([\\u05D5\\u05D4\\u05D1\\u05DC\\u05DE\\u05E9\\u05DB]{0,2})' + pair[0] + '(?![\\u05D0-\\u05EA])', 'g'), pair[1]];
+        });
+
+        var speakable = function (text) {
+            /* A quote mark before the last letter of a word is a gershayim (עו"ד, התשמ"א). One
+               that opens a quotation after a prefix letter (ו"חמישית") is followed by more. */
+            var out = text.replace(/([\u05D0-\u05EA])(?:"|''|\u201C|\u201D)(?=[\u05D0-\u05EA](?![\u05D0-\u05EA]))/g, '$1\u05F4');
+
+            SPOKEN.forEach(function (rule) {
+                out = out.replace(rule[0], '$1$2' + rule[1]);
+            });
+
+            return out;
+        };
+
         /* Chrome drops a single utterance that runs past ~15 seconds, so the page is spoken
            a sentence or two at a time. */
         var toChunks = function (text) {
@@ -550,7 +598,7 @@
         };
 
         var startReading = function () {
-            var chunks = toChunks(pageText());
+            var chunks = toChunks(speakable(pageText()));
             if (chunks.length === 0) return;
 
             var voice = pickVoice().voice;
@@ -569,7 +617,10 @@
 
             reading = true;
             queue = [];
-            syncReadButton();
+            // naming the voice makes a wrong one visible instead of merely audible
+            syncReadButton('מקריא בקול ' + voice.name + '.');
+
+            var chunkSince = Date.now();
 
             chunks.forEach(function (chunk, i) {
                 var u = new SpeechSynthesisUtterance(chunk);
@@ -578,9 +629,21 @@
 
                 u.onstart = function () { started = true; window.clearTimeout(startWatch); };
 
-                if (i === chunks.length - 1) {
-                    u.onend = function () { if (reading) finishReading(); };
-                }
+                u.onend = function () {
+                    var since = chunkSince;
+
+                    chunkSince = Date.now();
+                    if (reading === false) return;
+
+                    if (spokeHebrew(chunk, since) === false) {
+                        if (window.console) window.console.warn('[a11y] voice did not speak Hebrew:', voice.name);
+                        if (speech.speaking || speech.pending) speech.cancel();
+                        finishReading(NOT_HEBREW);
+                        return;
+                    }
+
+                    if (i === chunks.length - 1) finishReading();
+                };
 
                 u.onerror = function (e) {
                     // our own cancel() reports itself as an error; that is not a failure

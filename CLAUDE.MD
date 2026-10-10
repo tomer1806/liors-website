@@ -360,6 +360,15 @@ it into the CSP automatically, like the JSON-LD.
     every queued utterance referenced until reading ends (unreferenced ones get collected)
   - never fail silently: each engine error, and a start that never comes (6 s watchdog),
     shows the reason in the panel and logs `[a11y]` to the console
+  - a voice labelled Hebrew still has to *sound* Hebrew: a sentence with 30+ Hebrew letters that
+    ends faster than 25 ms per letter stops the reading with a message (an English voice says only
+    the periods, "dot, dot": 128 letters took Samantha 1.1 s, Carmit 12.5 s). The panel also names
+    the voice in use while reading, so a wrong one is visible
+  - text goes through `speakable()` first. Carmit pronounces a plain `"` inside a word as a word
+    of its own (`וחו"ד` took 3.2 s, `וחו״ד` 0.6 s) and reads some abbreviations as words
+    (`עו״ד` → "עוד"), so it turns quotes into ״ and expands עו״ד, חוו״ד, מו״מ, בע״מ, כיו״ב,
+    ת״י and others. **In page copy, always write abbreviations with ״ (U+05F4), never `"`**;
+    if a new abbreviation is misread, add it to `SPOKEN` in `main.js`
   - text is spoken in ~220-character chunks (Chrome drops one utterance past ~15 s);
     the breadcrumb and the form honeypot are not read
   - the embedded test browser in Claude Code speaks where Android does not: **test on a
