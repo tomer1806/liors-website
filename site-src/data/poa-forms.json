@@ -16,8 +16,8 @@
         { "file": "form-a-general.pdf", "name": "טופס א׳: ייפוי כוח מתמשך (כללי)" },
         { "file": "form-b-preliminary-directives.docx", "name": "טופס ב׳: הנחיות מקדימות לצורך מינוי אפוטרופוס" },
         { "file": "form-c-expression-of-will.docx", "name": "טופס ג׳: מסמך הבעת רצון" },
-        { "file": "form-d-medical-single.pdf", "name": "טופס ד׳: ייפוי כוח רפואי, מיופה כוח יחיד" },
-        { "file": "form-d-medical-multiple.pdf", "name": "טופס ד׳: ייפוי כוח רפואי, מספר מיופי כוח" }
+        { "file": "form-d-medical-single.pdf", "name": "טופס ד׳: ענייני בריאות, מיופה כוח יחיד" },
+        { "file": "form-d-medical-multiple.pdf", "name": "טופס ד׳: ענייני בריאות, מספר מיופי כוח" }
       ]
     },
     {
