@@ -467,7 +467,10 @@ h1, h2, h3, h4 {
     width: 100%;
     max-width: var(--wrap);
     margin: 0 auto;
-    padding: 0 var(--pad) clamp(56px, 8vw, 104px);
+    /* The top padding clears the fixed, transparent nav. It only shows when the content is
+       taller than the hero's min-height (short phone screens, in-app browsers, large text):
+       the hero then grows to fit and, without it, the title starts under the logo. */
+    padding: calc(var(--nav-h) + 24px) var(--pad) clamp(56px, 8vw, 104px);
 }
 
 .hero__title {
