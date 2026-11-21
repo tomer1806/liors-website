@@ -1,6 +1,7 @@
 # CLAUDE.md
 
-Guidance for Claude Code when working in this repository.
+Guidance for Claude Code when working in this repository. Read `MAINTAINING.md` first for
+hosting, DNS, deploy and the rules that must not break.
 
 ## Project
 
@@ -311,8 +312,8 @@ Two of those deserve a note:
    every subdomain (webmail included) is HTTPS, and `; preload` only if you intend the
    commitment — preload is hard to undo.
 3. **A WAF rate-limiting rule on `/api/contact`**, as above.
-4. The old WordPress install on `robas-law.co.il` is still serving injected SEO spam.
-   Cutting DNS over to this deployment is itself the fix.
+4. The old WordPress server (Hetzner) no longer serves the domain since the November 2026
+   cut-over. Back it up and shut it down.
 
 ## Accessibility
 
@@ -428,12 +429,13 @@ Build output is committed, so Cloudflare needs no build command.
 - Workers serves `/about.html` as a 307 to `/about` (its default `html_handling`). That is
   not caused by the Worker code; the static-only deploy did the same.
 
-## Live site caveat
+## Live site
 
-`robas-law.co.il` is still the old WordPress install and, as of September 2026, is
-serving **injected SEO spam** (casino paragraphs with outbound links) inside its
-homepage content. When pulling reference content from the live site, read it
-critically — do not copy it wholesale.
+Since **10 November 2026** `robas-law.co.il` serves this Worker (Custom Domains on
+`robas-law-website`, DNS in Cloudflare, registrar LiveDNS). The WordPress install it replaced had
+been compromised and served injected SEO spam: if you pull reference content from old snapshots of
+it, read it critically. Hosting, DNS and email records, and lessons from the cut-over are in
+`MAINTAINING.md`. Never touch the MX, SPF, `MS=` or `autodiscover` records without reading it.
 
 ## Historical note
 

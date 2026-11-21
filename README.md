@@ -3,6 +3,9 @@
 Website for **משרד עורכי דין ונוטריון ליאור רובס** (Lior Robas Law Firm & Notary), Netanya.
 Vanilla HTML/CSS/JS, Hebrew RTL, deployed as a Cloudflare Worker with static assets.
 
+**New here? Read [MAINTAINING.md](MAINTAINING.md) first:** where everything lives, how a change
+gets live, and what must not break.
+
 ---
 
 ## How this repo is laid out
@@ -19,7 +22,7 @@ wrangler.jsonc                Cloudflare Worker config (assets + the /api/contac
 worker/                       index.js routes /api/contact → contact.js; never inside the public folder
 
 robas-law-website/            ← BUILD OUTPUT, committed, what Cloudflare serves
-├── *.html                    15 generated pages — do not hand-edit, they get overwritten
+├── *.html                    17 generated pages — do not hand-edit, they get overwritten
 ├── css/style.css             the design system (hand-written, edit directly)
 ├── js/main.js                site behaviour (hand-written, edit directly)
 ├── assets/                   logos (SVG), client logos (PNG), photos
@@ -40,7 +43,7 @@ until the next build, then your change is gone. Edit `site-src/` and rebuild.
 node build.js
 ```
 
-That's it — no npm install, no dependencies. It prints `Built 15 pages` and fails
+That's it — no npm install, no dependencies. It prints `Built 17 pages` and fails
 loudly (non-zero exit) if a page has broken front-matter or an unknown `{{token}}`.
 
 The output is committed to the repo, so **Cloudflare needs no build step of its own**
@@ -144,9 +147,9 @@ Server code must never go inside `robas-law-website/` — everything there is pu
 
 ---
 
-## Note on the current live site
+## The live site
 
-`robas-law.co.il` is still the old WordPress install, and as of September 2026 it is
-serving injected SEO spam (casino paragraphs with outbound links) inside its homepage
-content. That is a compromise of the WordPress site, not of this project. Worth telling
-Lior regardless — and a reason not to copy content from it wholesale.
+Since 10 November 2026 `robas-law.co.il` serves this deployment. Before that it was a WordPress
+install that had been compromised and was serving injected SEO spam, so don't copy content from
+old snapshots of it wholesale. Hosting, DNS, email records and open items are in
+[MAINTAINING.md](MAINTAINING.md).
